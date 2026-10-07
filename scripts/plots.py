@@ -1,6 +1,6 @@
 """Plots and summary tables for the GA experiments.
 
-Usage: python scripts/plots.py <results-dir>
+Usage: python scripts/plots.py <results-dir> [--no-show]
 
 For every instance directory with history.csv and runs.csv writes:
   summary.csv, summary.md          statistics of every configuration
@@ -8,6 +8,9 @@ For every instance directory with history.csv and runs.csv writes:
   plots/boxplot_<series>.png       best values of all runs per configuration
   plots/population_base.png        best and median fitness of the population (base config)
   plots/feasible_share.png         share of feasible individuals (penalty series)
+
+Then all plots are shown in one window (arrow keys switch between them); the script
+ends when the window is closed. --no-show only writes the files.
 """
 
 import sys
@@ -241,17 +244,53 @@ def instance(directory):
     print(f"{directory.name}: summary and {len(list(out.glob('*.png')))} plots in {out}")
 
 
+def show(images):
+    """One window for all plots: arrow keys switch, closing the window ends the script."""
+    plt.switch_backend("TkAgg")
+    fig, ax = plt.subplots(figsize=(12, 6.5))
+    fig.canvas.manager.set_window_title("GA experiments")
+    fig.subplots_adjust(left=0, right=1, bottom=0, top=0.95)
+    position = [0]
+
+    def draw():
+        path = images[position[0]]
+        ax.clear()
+        ax.imshow(plt.imread(path))
+        ax.set_axis_off()
+        ax.set_title(f"{path.parent.parent.name} / {path.name}    "
+                     f"({position[0] + 1}/{len(images)}, arrow keys: next / previous)",
+                     fontsize=10, loc="left", color=INK_SECONDARY)
+        fig.canvas.draw_idle()
+
+    def key(event):
+        if event.key in ("right", "down"):
+            position[0] = (position[0] + 1) % len(images)
+        elif event.key in ("left", "up"):
+            position[0] = (position[0] - 1) % len(images)
+        else:
+            return
+        draw()
+
+    fig.canvas.mpl_connect("key_press_event", key)
+    draw()
+    print(f"Showing {len(images)} plots: arrow keys to switch, close the window to finish")
+    plt.show()
+
+
 def main():
-    if len(sys.argv) != 2:
+    args = [arg for arg in sys.argv[1:] if arg != "--no-show"]
+    if len(args) != 1:
         print(__doc__)
         sys.exit(2)
-    root = Path(sys.argv[1])
+    root = Path(args[0])
     dirs = sorted(path.parent for path in root.glob("*/runs.csv"))
     if not dirs:
         print(f"No results in {root}")
         sys.exit(1)
     for directory in dirs:
         instance(directory)
+    if "--no-show" not in sys.argv:
+        show(sorted(path for directory in dirs for path in (directory / "plots").glob("*.png")))
 
 
 if __name__ == "__main__":

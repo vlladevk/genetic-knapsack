@@ -54,6 +54,9 @@ on `mknap1-6` (n = 50, m = 5) and `mknapcb1-0` (n = 100, m = 5), prints a summar
 calls `scripts/plots.py`. Results go to `results/<instance>/`:
 `history.csv`, `runs.csv`, `summary.csv`, `summary.md`, `plots/*.png`.
 
+Then all plots open in one window (arrow keys switch between them); the program ends
+when the window is closed.
+
 Options: `--no-plots` skips Python; `-Dpython=python3` sets the Python command.
 
 ## Experiments
@@ -66,5 +69,8 @@ Base configuration: P = 30, G = 1000, tournament 2, pc = 0.9, pm = 1/n, linear p
 | B | pm ∈ {0, 0.5, 1, 2, 5, 10} / n |
 | C | P ∈ {10, 30, 50} |
 | D | linear penalty vs death penalty |
+
+All 16 configurations are listed one per line in
+[`ExperimentPlan.java`](src/main/java/pl/pwr/tio/mkp/experiment/ExperimentPlan.java).
 
 Tests: `mvn test`.
