@@ -60,6 +60,27 @@ public record EvolutionResult(int generation, List<Individual> population) {
     }
 
     /**
+     * Median fitness of the population. Unlike the average it is not dominated
+     * by a few heavily penalized individuals.
+     *
+     * @return Median fitness
+     */
+    public double medianFitness() {
+        final double[] sorted = this.population.stream()
+            .mapToDouble(Individual::fitness)
+            .sorted()
+            .toArray();
+        final int middle = sorted.length / 2;
+        final double median;
+        if (sorted.length % 2 == 0) {
+            median = (sorted[middle - 1] + sorted[middle]) / 2;
+        } else {
+            median = sorted[middle];
+        }
+        return median;
+    }
+
+    /**
      * Feasible individual with the highest fitness. Only feasible solutions are valid
      * answers of the algorithm, infeasible ones may live in the population only as
      * steps towards good solutions.

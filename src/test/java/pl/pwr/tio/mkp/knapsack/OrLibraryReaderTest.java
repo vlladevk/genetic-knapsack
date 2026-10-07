@@ -14,7 +14,8 @@ final class OrLibraryReaderTest {
 
     @Test
     void readsAllProblemsOfMknap1() throws IOException {
-        final List<KnapsackInstance> all = new OrLibraryReader().read(Path.of("data", "mknap1.txt"));
+        final List<KnapsackInstance> all =
+            new OrLibraryReader().read(Path.of("data", "mknap1.txt"));
         assertEquals(7, all.size());
         assertEquals(List.of(6, 10, 15, 20, 28, 39, 50),
             all.stream().map(KnapsackInstance::size).toList());
