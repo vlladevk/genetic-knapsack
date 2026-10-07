@@ -9,7 +9,6 @@ package pl.pwr.tio.mkp;
  *
  * @since 0.1
  */
-@SuppressWarnings("PMD.SystemPrintln")
 public final class Main {
 
     /**
