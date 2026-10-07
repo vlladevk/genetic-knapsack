@@ -9,10 +9,10 @@ import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import pl.pwr.tio.mkp.genetic.Individual;
+import pl.pwr.tio.mkp.knapsack.CsvInstanceReader;
 import pl.pwr.tio.mkp.knapsack.KnapsackInstance;
 import pl.pwr.tio.mkp.knapsack.KnapsackProblem;
 import pl.pwr.tio.mkp.knapsack.LinearPenalty;
-import pl.pwr.tio.mkp.knapsack.OrLibraryReader;
 import pl.pwr.tio.mkp.operator.BitFlipMutator;
 import pl.pwr.tio.mkp.operator.SinglePointCrossover;
 import pl.pwr.tio.mkp.selector.TournamentSelector;
@@ -21,7 +21,7 @@ final class EngineTest {
 
     @Test
     void findsOptimumOfToyExample() throws IOException {
-        final KnapsackInstance toy = new OrLibraryReader().read(Path.of("data", "toy.txt")).get(0);
+        final KnapsackInstance toy = new CsvInstanceReader().read(Path.of("data", "toy.csv"), 23);
         final Engine engine = this.engine(toy, 7);
         final double best = engine.stream()
             .limit(51)
@@ -36,7 +36,7 @@ final class EngineTest {
     @Test
     void sameSeedGivesSameRun() throws IOException {
         final KnapsackInstance instance =
-            new OrLibraryReader().read(Path.of("data", "mknap1.txt")).get(6);
+            new CsvInstanceReader().read(Path.of("data", "mknap1-6.csv"), 16537);
         final List<Double> first = this.engine(instance, 3).stream().limit(30)
             .map(result -> result.best().fitness()).toList();
         final List<Double> second = this.engine(instance, 3).stream().limit(30)
@@ -46,7 +46,7 @@ final class EngineTest {
 
     @Test
     void keepsPopulationSizeAndCountsGenerations() throws IOException {
-        final KnapsackInstance toy = new OrLibraryReader().read(Path.of("data", "toy.txt")).get(0);
+        final KnapsackInstance toy = new CsvInstanceReader().read(Path.of("data", "toy.csv"), 23);
         final List<EvolutionResult> results = this.engine(toy, 1).stream().limit(5).toList();
         assertEquals(List.of(0, 1, 2, 3, 4),
             results.stream().map(EvolutionResult::generation).toList());

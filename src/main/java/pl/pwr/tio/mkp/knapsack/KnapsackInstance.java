@@ -1,10 +1,9 @@
 package pl.pwr.tio.mkp.knapsack;
 
 import java.util.List;
-import java.util.OptionalDouble;
 
-// Problem instance (instancja problemu): items, capacity (pojemność) of every
-// constraint and the optimal value if known.
+// One problem: items, capacity of every
+// constraint and the optimal (or best known) value.
 public final class KnapsackInstance {
 
     private final String name;
@@ -14,11 +13,10 @@ public final class KnapsackInstance {
 
     private final double[] capacities;
 
-    // optimal or best known, empty if unknown
-    private final OptionalDouble optimum;
+    private final double optimum;
 
     public KnapsackInstance(final String name, final List<Item> items,
-        final double[] capacities, final OptionalDouble optimum) {
+        final double[] capacities, final double optimum) {
         if (items.isEmpty()) {
             throw new IllegalArgumentException("Instance must have at least one item");
         }
@@ -37,11 +35,6 @@ public final class KnapsackInstance {
         this.items = List.copyOf(items);
         this.capacities = capacities.clone();
         this.optimum = optimum;
-    }
-
-    public KnapsackInstance withOptimum(final double value) {
-        return new KnapsackInstance(this.name, this.items, this.capacities,
-            OptionalDouble.of(value));
     }
 
     public String name() {
@@ -70,7 +63,7 @@ public final class KnapsackInstance {
         return this.capacities[constraint];
     }
 
-    public OptionalDouble optimum() {
+    public double optimum() {
         return this.optimum;
     }
 

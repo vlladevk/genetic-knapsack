@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Locale;
 import pl.pwr.tio.mkp.knapsack.KnapsackInstance;
 
-// Comparative study (badania porównawcze): each series changes one parameter.
+// Experiments: each series changes one parameter.
 // Base: P = 30, G = 1000, tournament 2, pc = 0.9, pm = 1/n, linear penalty.
 // A: pc, B: pm, C: P, D: linear vs death penalty.
 public final class ExperimentPlan {

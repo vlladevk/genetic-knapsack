@@ -14,9 +14,9 @@ import pl.pwr.tio.mkp.experiment.RunConfig;
 import pl.pwr.tio.mkp.experiment.RunOutcome;
 import pl.pwr.tio.mkp.experiment.SummaryTable;
 import pl.pwr.tio.mkp.genetic.Individual;
+import pl.pwr.tio.mkp.knapsack.CsvInstanceReader;
 import pl.pwr.tio.mkp.knapsack.KnapsackCodec;
 import pl.pwr.tio.mkp.knapsack.KnapsackInstance;
-import pl.pwr.tio.mkp.knapsack.OrLibraryReader;
 
 // Runs the toy example and all experiments.
 // Args: --no-plots skips Python; -Dpython=python3 changes the Python command.
@@ -29,8 +29,13 @@ public final class Main {
     // seeds 1..RUNS
     private static final int RUNS = 10;
 
-    // mknap1-6: n = 50, m = 5
-    private static final int MKNAP1_LARGEST = 6;
+    // optima from OR-Library (see data/README.md)
+    private static final double TOY_OPTIMUM = 23;
+
+    private static final double MKNAP1_6_OPTIMUM = 16537;
+
+    // best known, the exact optimum is unknown
+    private static final double MKNAPCB1_0_BEST = 24381;
 
     private static final int TOY_GENERATIONS = 50;
 
@@ -40,17 +45,13 @@ public final class Main {
     }
 
     public static void main(final String[] args) throws IOException {
-        // one file can hold several problems, so read() returns a list
-        final OrLibraryReader reader = new OrLibraryReader();
-        final KnapsackInstance toy = reader.read(Main.DATA.resolve("toy.txt")).getFirst();
+        final CsvInstanceReader reader = new CsvInstanceReader();
+        final KnapsackInstance toy = reader.read(Main.DATA.resolve("toy.csv"), Main.TOY_OPTIMUM);
         Main.toy(toy);
-        final KnapsackInstance small =
-            reader.read(Main.DATA.resolve("mknap1.txt")).get(Main.MKNAP1_LARGEST);
-        // mknapcb1 has no optimum inside, best known values are in a separate file
-        final KnapsackInstance large = reader.read(
-            Main.DATA.resolve("mknapcb1.txt"), Main.DATA.resolve("mknapcb1-best.txt")
-        ).getFirst();
-        final List<KnapsackInstance> instances = List.of(small, large);
+        final List<KnapsackInstance> instances = List.of(
+            reader.read(Main.DATA.resolve("mknap1-6.csv"), Main.MKNAP1_6_OPTIMUM),
+            reader.read(Main.DATA.resolve("mknapcb1-0.csv"), Main.MKNAPCB1_0_BEST)
+        );
         final ExperimentRunner runner = new ExperimentRunner(Main.RESULTS, Main.RUNS);
         final ExperimentPlan plan = new ExperimentPlan();
         for (final KnapsackInstance instance : instances) {
@@ -75,7 +76,7 @@ public final class Main {
             .map(EvolutionResult::bestFeasible)
             .flatMap(Optional::stream)
             .max(Comparator.comparingDouble(Individual::fitness));
-        System.out.println("Toy example " + toy + ", optimum " + toy.optimum().orElse(0));
+        System.out.println("Toy example " + toy + ", optimum " + toy.optimum());
         best.ifPresent(ind -> System.out.println("  best " + ind.chromosome() + " value "
             + ind.fitness() + " items " + new KnapsackCodec(toy).decode(ind.chromosome())
             .stream().map(item -> "#" + item.index()).toList()));

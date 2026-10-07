@@ -6,7 +6,7 @@ import java.util.Random;
 import pl.pwr.tio.mkp.genetic.Chromosome;
 import pl.pwr.tio.mkp.genetic.Codec;
 
-// Binary encoding (kodowanie binarne): gene j = 1 means item j is in the knapsack.
+// Binary encoding: gene j = 1 means item j is in the knapsack.
 public final class KnapsackCodec implements Codec<List<Item>> {
 
     private final KnapsackInstance instance;

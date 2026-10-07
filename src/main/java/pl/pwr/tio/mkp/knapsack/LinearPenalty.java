@@ -8,7 +8,7 @@ public final class LinearPenalty implements Penalty {
     // when no item has a positive weight
     private static final double DEFAULT_COEFFICIENT = 1.0;
 
-    // rho, penalty coefficient (współczynnik kary)
+    // rho
     private final double coefficient;
 
     public LinearPenalty(final double coefficient) {

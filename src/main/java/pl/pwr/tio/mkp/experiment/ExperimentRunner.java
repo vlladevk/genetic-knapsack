@@ -1,13 +1,16 @@
 package pl.pwr.tio.mkp.experiment;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.OptionalDouble;
+import java.util.stream.Collectors;
 import pl.pwr.tio.mkp.engine.EvolutionResult;
 import pl.pwr.tio.mkp.genetic.Individual;
 import pl.pwr.tio.mkp.knapsack.KnapsackInstance;
@@ -43,18 +46,20 @@ public final class ExperimentRunner {
         final Path dir = this.output.resolve(instance.name());
         Files.createDirectories(dir);
         final List<RunOutcome> outcomes = new ArrayList<>(configs.size() * this.runs);
-        try (CsvWriter history =
-                new CsvWriter(dir.resolve("history.csv"), ExperimentRunner.HISTORY);
-            CsvWriter summary = new CsvWriter(dir.resolve("runs.csv"), ExperimentRunner.RUNS)) {
+        try (PrintWriter history = ExperimentRunner.open(dir.resolve("history.csv"));
+            PrintWriter summary = ExperimentRunner.open(dir.resolve("runs.csv"))) {
+            history.println(String.join(",", ExperimentRunner.HISTORY));
+            summary.println(String.join(",", ExperimentRunner.RUNS));
             for (final RunConfig config : configs) {
                 for (long seed = 1; seed <= this.runs; ++seed) {
                     final RunOutcome outcome = ExperimentRunner.single(instance, config, seed,
                         history);
-                    summary.row(instance.name(), config.series(), config.label(),
-                        config.populationSize(), config.generations(), config.tournamentSize(),
-                        config.crossover(), config.mutation(), config.penalty().name(), seed,
+                    summary.println(ExperimentRunner.csv(instance.name(), config.series(),
+                        config.label(), config.populationSize(), config.generations(),
+                        config.tournamentSize(), config.crossover(), config.mutation(),
+                        config.penalty().name(), seed,
                         outcome.best(), outcome.foundAt(), instance.optimum(),
-                        outcome.feasibleShare());
+                        outcome.feasibleShare()));
                     outcomes.add(outcome);
                 }
             }
@@ -63,7 +68,7 @@ public final class ExperimentRunner {
     }
 
     private static RunOutcome single(final KnapsackInstance instance, final RunConfig config,
-        final long seed, final CsvWriter history) throws IOException {
+        final long seed, final PrintWriter history) {
         final Iterator<EvolutionResult> generations = config.engine(instance, seed).stream()
             .limit(config.generations() + 1L)
             .iterator();
@@ -79,12 +84,31 @@ public final class ExperimentRunner {
                 found = result.generation();
             }
             share = result.feasibleShare();
-            history.row(config.series(), config.label(), seed, result.generation(),
-                result.best().fitness(), result.averageFitness(), result.medianFitness(),
-                result.worst().fitness(),
-                ExperimentRunner.fitness(feasible), best, share);
+            history.println(ExperimentRunner.csv(config.series(), config.label(), seed,
+                result.generation(), result.best().fitness(), result.averageFitness(),
+                result.medianFitness(), result.worst().fitness(),
+                ExperimentRunner.fitness(feasible), best, share));
         }
         return new RunOutcome(config, seed, best, found, share);
+    }
+
+    private static PrintWriter open(final Path file) throws IOException {
+        return new PrintWriter(Files.newBufferedWriter(file));
+    }
+
+    private static String csv(final Object... cells) {
+        return Arrays.stream(cells).map(ExperimentRunner::cell).collect(Collectors.joining(","));
+    }
+
+    // empty OptionalDouble (no feasible solution) = empty cell
+    private static String cell(final Object value) {
+        final String text;
+        if (value instanceof OptionalDouble optional) {
+            text = optional.isPresent() ? String.valueOf(optional.getAsDouble()) : "";
+        } else {
+            text = String.valueOf(value);
+        }
+        return text;
     }
 
     private static OptionalDouble fitness(final Optional<Individual> individual) {

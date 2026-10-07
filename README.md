@@ -32,9 +32,9 @@ pl.pwr.tio.mkp
 ├── selector/    Selector, TournamentSelector
 ├── operator/    GeneticOperator, Crossover, SinglePointCrossover, BitFlipMutator
 ├── engine/      Engine (main loop, stream of generations), EvolutionResult
-├── knapsack/    Item, KnapsackInstance, OrLibraryReader, KnapsackCodec,
+├── knapsack/    Item, KnapsackInstance, CsvInstanceReader, KnapsackCodec,
 │                KnapsackProblem, Penalty, LinearPenalty, DeathPenalty
-├── experiment/  ExperimentPlan, RunConfig, ExperimentRunner, CsvWriter, SummaryTable, Plots
+├── experiment/  ExperimentPlan, RunConfig, ExperimentRunner, SummaryTable, Plots
 └── Main
 ```
 

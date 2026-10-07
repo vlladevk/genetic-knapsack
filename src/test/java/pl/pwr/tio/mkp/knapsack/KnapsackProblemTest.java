@@ -21,7 +21,7 @@ final class KnapsackProblemTest {
 
     @BeforeAll
     static void readToy() throws IOException {
-        toy = new OrLibraryReader().read(Path.of("data", "toy.txt")).get(0);
+        toy = new CsvInstanceReader().read(Path.of("data", "toy.csv"), 23);
     }
 
     @Test

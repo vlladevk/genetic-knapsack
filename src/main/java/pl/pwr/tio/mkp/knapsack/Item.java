@@ -3,7 +3,7 @@ package pl.pwr.tio.mkp.knapsack;
 import java.util.Arrays;
 import java.util.Objects;
 
-// Item (przedmiot): value (wartość) and one weight (waga) per constraint.
+// Item: value and one weight per constraint.
 // index = position in the instance = gene index.
 public record Item(int index, double value, double[] weights) {
 

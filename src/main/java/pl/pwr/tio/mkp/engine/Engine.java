@@ -11,7 +11,7 @@ import pl.pwr.tio.mkp.operator.GeneticOperator;
 import pl.pwr.tio.mkp.selector.Selector;
 import pl.pwr.tio.mkp.selector.TournamentSelector;
 
-// Basic genetic algorithm (podstawowy algorytm genetyczny).
+// Genetic algorithm (algorytm genetyczny).
 // One generation: select P parents -> crossover -> mutation -> evaluate.
 // Children replace the whole population (no elitism).
 public final class Engine {
