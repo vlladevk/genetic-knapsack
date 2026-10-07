@@ -21,15 +21,13 @@ import pl.pwr.tio.mkp.selector.TournamentSelector;
  *
  * <p>All randomness of a run comes from one generator created from the seed,
  * so a run with the same seed and parameters always gives the same result.</p>
- *
- * @param <T> Type of a solution of the problem
  */
-public final class Engine<T> {
+public final class Engine {
 
     /**
      * Problem to solve.
      */
-    private final Problem<T> problem;
+    private final Problem<?> problem;
 
     /**
      * Number of individuals in every generation (P).
@@ -56,7 +54,7 @@ public final class Engine<T> {
      *
      * @param builder Builder with the parameters
      */
-    private Engine(final Builder<T> builder) {
+    private Engine(final Builder builder) {
         this.problem = builder.problem;
         this.populationSize = builder.populationSize;
         this.selector = builder.selector;
@@ -115,10 +113,8 @@ public final class Engine<T> {
 
     /**
      * Builder of the engine.
-     *
-     * @param <T> Type of a solution of the problem
      */
-    public static final class Builder<T> {
+    public static final class Builder {
 
         /**
          * Default number of individuals in a generation.
@@ -133,7 +129,7 @@ public final class Engine<T> {
         /**
          * Problem to solve.
          */
-        private final Problem<T> problem;
+        private final Problem<?> problem;
 
         /**
          * Operators applied in order.
@@ -160,7 +156,7 @@ public final class Engine<T> {
          *
          * @param problem Problem to solve
          */
-        public Builder(final Problem<T> problem) {
+        public Builder(final Problem<?> problem) {
             this.problem = problem;
         }
 
@@ -170,7 +166,7 @@ public final class Engine<T> {
          * @param size Population size (P), at least 2
          * @return This builder
          */
-        public Builder<T> populationSize(final int size) {
+        public Builder populationSize(final int size) {
             if (size < 2) {
                 throw new IllegalArgumentException("Population size must be at least 2: " + size);
             }
@@ -184,7 +180,7 @@ public final class Engine<T> {
          * @param method Selection method
          * @return This builder
          */
-        public Builder<T> selector(final Selector method) {
+        public Builder selector(final Selector method) {
             this.selector = method;
             return this;
         }
@@ -195,7 +191,7 @@ public final class Engine<T> {
          * @param list Operators, usually crossover and then mutation
          * @return This builder
          */
-        public Builder<T> operators(final GeneticOperator... list) {
+        public Builder operators(final GeneticOperator... list) {
             this.operators.clear();
             this.operators.addAll(List.of(list));
             return this;
@@ -207,7 +203,7 @@ public final class Engine<T> {
          * @param value Seed
          * @return This builder
          */
-        public Builder<T> seed(final long value) {
+        public Builder seed(final long value) {
             this.seed = value;
             return this;
         }
@@ -217,8 +213,8 @@ public final class Engine<T> {
          *
          * @return Engine
          */
-        public Engine<T> build() {
-            return new Engine<>(this);
+        public Engine build() {
+            return new Engine(this);
         }
     }
 }

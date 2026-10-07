@@ -1,8 +1,6 @@
 package pl.pwr.tio.mkp.experiment;
 
-import java.util.List;
 import pl.pwr.tio.mkp.engine.Engine;
-import pl.pwr.tio.mkp.knapsack.Item;
 import pl.pwr.tio.mkp.knapsack.KnapsackInstance;
 import pl.pwr.tio.mkp.knapsack.KnapsackProblem;
 import pl.pwr.tio.mkp.operator.BitFlipMutator;
@@ -39,8 +37,8 @@ public record RunConfig(
      * @param seed Seed of the run
      * @return Engine
      */
-    public Engine<List<Item>> engine(final KnapsackInstance instance, final long seed) {
-        return new Engine.Builder<>(new KnapsackProblem(instance, this.penalty.create(instance)))
+    public Engine engine(final KnapsackInstance instance, final long seed) {
+        return new Engine.Builder(new KnapsackProblem(instance, this.penalty.create(instance)))
             .populationSize(this.populationSize)
             .selector(new TournamentSelector(this.tournamentSize))
             .operators(new SinglePointCrossover(this.crossover), new BitFlipMutator(this.mutation))

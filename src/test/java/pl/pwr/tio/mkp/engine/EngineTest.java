@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import pl.pwr.tio.mkp.genetic.Individual;
-import pl.pwr.tio.mkp.knapsack.Item;
 import pl.pwr.tio.mkp.knapsack.KnapsackInstance;
 import pl.pwr.tio.mkp.knapsack.KnapsackProblem;
 import pl.pwr.tio.mkp.knapsack.LinearPenalty;
@@ -23,7 +22,7 @@ final class EngineTest {
     @Test
     void findsOptimumOfToyExample() throws IOException {
         final KnapsackInstance toy = new OrLibraryReader().read(Path.of("data", "toy.txt")).get(0);
-        final Engine<List<Item>> engine = this.engine(toy, 7);
+        final Engine engine = this.engine(toy, 7);
         final double best = engine.stream()
             .limit(51)
             .map(EvolutionResult::bestFeasible)
@@ -54,8 +53,8 @@ final class EngineTest {
         assertTrue(results.stream().allMatch(result -> result.population().size() == 10));
     }
 
-    private Engine<List<Item>> engine(final KnapsackInstance instance, final long seed) {
-        return new Engine.Builder<>(new KnapsackProblem(instance, LinearPenalty.of(instance)))
+    private Engine engine(final KnapsackInstance instance, final long seed) {
+        return new Engine.Builder(new KnapsackProblem(instance, LinearPenalty.of(instance)))
             .populationSize(10)
             .selector(new TournamentSelector(2))
             .operators(new SinglePointCrossover(0.9), new BitFlipMutator(1.0 / instance.size()))
