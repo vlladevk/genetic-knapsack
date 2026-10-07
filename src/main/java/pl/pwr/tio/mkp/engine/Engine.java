@@ -13,7 +13,7 @@ import pl.pwr.tio.mkp.selector.TournamentSelector;
 
 // Genetic algorithm (algorytm genetyczny).
 // One generation: select P parents -> crossover -> mutation -> evaluate.
-// Children replace the whole population (no elitism).
+// Children replace the whole population.
 public final class Engine {
 
     private final Problem<?> problem;

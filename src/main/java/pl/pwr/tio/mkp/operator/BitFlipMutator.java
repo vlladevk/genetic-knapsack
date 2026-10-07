@@ -10,7 +10,9 @@ import pl.pwr.tio.mkp.genetic.Chromosome;
 public final class BitFlipMutator implements GeneticOperator {
 
     // pm, mutation probability (prawdopodobieństwo mutacji): chance that one gene
-    // is flipped, usually 1/n
+    // is flipped. Usual pm = 1/n: on average one gene per child changes, so the child
+    // tries something new but stays close to its parents. pm = 0: no new genes ever
+    // appear; large pm: the child is almost random (series B compares this).
     private final double probability;
 
     public BitFlipMutator(final double probability) {

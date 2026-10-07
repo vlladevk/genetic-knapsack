@@ -26,12 +26,14 @@ public final class Main {
 
     private static final Path RESULTS = Path.of("results");
 
-    // seeds 1..RUNS
+    // GA is random, one run proves nothing: every configuration runs 10 times,
+    // seeds 1..10, and the summary shows mean, std, min, max
     private static final int RUNS = 10;
 
-    // optima from OR-Library (see data/README.md)
+    // 110100 = tent + food + torch, checked by hand (only 64 combinations)
     private static final double TOY_OPTIMUM = 23;
 
+    // from OR-Library (see data/README.md)
     private static final double MKNAP1_6_OPTIMUM = 16537;
 
     // best known, the exact optimum is unknown

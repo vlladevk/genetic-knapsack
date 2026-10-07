@@ -14,15 +14,20 @@ public final class ExperimentPlan {
     public static final int POPULATION = 30;
 
     // without generation 0
+    // with 500 the best value was still improving at the end
     public static final int GENERATIONS = 1000;
 
+    // k = 2: the weakest pressure that still prefers better individuals. With a small
+    // population a stronger one quickly fills it with copies of one individual.
     public static final int TOURNAMENT = 2;
 
+    // typical pc is 0.6..1.0: most pairs are crossed, a few parents pass unchanged
     public static final double CROSSOVER = 0.9;
 
     private static final double[] CROSSOVERS = {0.0, 0.5, 0.7, 0.9, 1.0};
 
-    // multiples of 1/n
+    // multiples of 1/n (= 1 flipped gene per child on average), so "pm=2/n" means
+    // the same for n = 50 and n = 100
     private static final double[] MUTATIONS_PER_N = {0.0, 0.5, 1.0, 2.0, 5.0, 10.0};
 
     private static final int[] POPULATIONS = {10, 30, 50};

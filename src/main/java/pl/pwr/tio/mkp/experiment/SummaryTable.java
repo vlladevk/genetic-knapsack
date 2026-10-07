@@ -11,7 +11,9 @@ import java.util.OptionalDouble;
 import pl.pwr.tio.mkp.knapsack.KnapsackInstance;
 
 // Summary per configuration: feasible runs, then over them mean, std, min, max,
-// hits of the optimum and mean gap to it in %.
+// hits of the optimum and gap.
+// gap = how far the mean result is from the optimum, in % of the optimum:
+//   gap = (optimum - mean) / optimum * 100,  e.g. (16537 - 16387) / 16537 = 0.91%
 public final class SummaryTable {
 
     // closer than this = equal to the optimum
@@ -61,7 +63,8 @@ public final class SummaryTable {
         return line;
     }
 
-    // sample standard deviation
+    // sample standard deviation (divide by n - 1): 10 runs are only a sample
+    // of all possible runs
     private static double deviation(final double[] values, final double mean) {
         double squares = 0;
         for (final double value : values) {

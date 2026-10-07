@@ -72,6 +72,8 @@ public final class ExperimentRunner {
         final Iterator<EvolutionResult> generations = config.engine(instance, seed).stream()
             .limit(config.generations() + 1L)
             .iterator();
+        // best feasible value of the whole run, not only of the last generation:
+        // without elitism the best individual can disappear (column best_ever)
         OptionalDouble best = OptionalDouble.empty();
         int found = -1;
         double share = 0;

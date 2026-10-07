@@ -30,7 +30,10 @@ public final class KnapsackCodec implements Codec<List<Item>> {
         return chosen;
     }
 
-    // every item taken with probability 1/2
+    // Every item taken with probability 1/2, so about n/2 items. On the big instances
+    // this is far over capacity: the whole initial population is infeasible. That is
+    // why the death penalty finds nothing there - everybody gets -1, so selection
+    // has nothing to prefer and the search is random.
     @Override
     public Chromosome random(final Random random) {
         final boolean[] genes = new boolean[this.instance.size()];

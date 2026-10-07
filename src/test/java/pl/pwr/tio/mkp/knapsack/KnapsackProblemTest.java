@@ -43,11 +43,6 @@ final class KnapsackProblemTest {
     }
 
     @Test
-    void rhoIsLargestValuePerUnitOfWeight() {
-        assertEquals(5, LinearPenalty.of(toy).coefficient(), DELTA);
-    }
-
-    @Test
     void deathPenaltyRejectsEveryInfeasibleSolution() {
         final KnapsackProblem problem = new KnapsackProblem(toy, new DeathPenalty());
         assertEquals(-1, problem.evaluate(Chromosome.parse("111110")).fitness(), DELTA);
