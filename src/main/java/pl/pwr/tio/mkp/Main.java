@@ -6,8 +6,6 @@ package pl.pwr.tio.mkp;
 
 /**
  * Application entry point.
- *
- * @since 0.1
  */
 public final class Main {
 
