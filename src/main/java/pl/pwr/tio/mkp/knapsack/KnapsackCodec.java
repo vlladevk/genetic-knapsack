@@ -30,8 +30,8 @@ public final class KnapsackCodec implements Codec<List<Item>> {
         return chosen;
     }
 
-    @Override
     // every item taken with probability 1/2
+    @Override
     public Chromosome random(final Random random) {
         final boolean[] genes = new boolean[this.instance.size()];
         for (int idx = 0; idx < genes.length; ++idx) {

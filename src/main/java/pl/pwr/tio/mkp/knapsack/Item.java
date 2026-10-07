@@ -20,12 +20,6 @@ public record Item(int index, double value, double[] weights) {
         weights = weights.clone();
     }
 
-    @Override
-    // copy, so the record stays immutable
-    public double[] weights() {
-        return this.weights.clone();
-    }
-
     public double weight(final int constraint) {
         return this.weights[constraint];
     }
@@ -36,10 +30,10 @@ public record Item(int index, double value, double[] weights) {
 
     @Override
     public boolean equals(final Object other) {
-        return other instanceof Item item
-            && this.index == item.index
-            && Double.compare(this.value, item.value) == 0
-            && Arrays.equals(this.weights, item.weights);
+        return other instanceof Item(int index1, double value1, double[] weights1)
+            && this.index == index1
+            && Double.compare(this.value, value1) == 0
+            && Arrays.equals(this.weights, weights1);
     }
 
     @Override

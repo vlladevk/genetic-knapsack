@@ -38,8 +38,8 @@ public final class KnapsackProblem implements Problem<List<Item>> {
         return total;
     }
 
-    @Override
     // sum over constraints of max(0, load - capacity); 0 = feasible
+    @Override
     public double violation(final List<Item> solution) {
         double excess = 0;
         for (int constraint = 0; constraint < this.instance.dimensions(); ++constraint) {

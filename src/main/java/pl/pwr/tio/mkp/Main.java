@@ -40,13 +40,17 @@ public final class Main {
     }
 
     public static void main(final String[] args) throws IOException {
+        // one file can hold several problems, so read() returns a list
         final OrLibraryReader reader = new OrLibraryReader();
-        Main.toy(reader.read(Main.DATA.resolve("toy.txt")).getFirst());
-        final List<KnapsackInstance> instances = List.of(
-            reader.read(Main.DATA.resolve("mknap1.txt")).get(Main.MKNAP1_LARGEST),
-            reader.read(Main.DATA.resolve("mknapcb1.txt"), Main.DATA.resolve("mknapcb1-best.txt"))
-                .getFirst()
-        );
+        final KnapsackInstance toy = reader.read(Main.DATA.resolve("toy.txt")).getFirst();
+        Main.toy(toy);
+        final KnapsackInstance small =
+            reader.read(Main.DATA.resolve("mknap1.txt")).get(Main.MKNAP1_LARGEST);
+        // mknapcb1 has no optimum inside, best known values are in a separate file
+        final KnapsackInstance large = reader.read(
+            Main.DATA.resolve("mknapcb1.txt"), Main.DATA.resolve("mknapcb1-best.txt")
+        ).getFirst();
+        final List<KnapsackInstance> instances = List.of(small, large);
         final ExperimentRunner runner = new ExperimentRunner(Main.RESULTS, Main.RUNS);
         final ExperimentPlan plan = new ExperimentPlan();
         for (final KnapsackInstance instance : instances) {
@@ -61,6 +65,7 @@ public final class Main {
         }
     }
 
+    // solves the toy example and prints the best feasible chromosome and its items
     private static void toy(final KnapsackInstance toy) {
         final RunConfig config = new RunConfig("toy", "base", ExperimentPlan.POPULATION,
             Main.TOY_GENERATIONS, ExperimentPlan.TOURNAMENT, ExperimentPlan.CROSSOVER,
