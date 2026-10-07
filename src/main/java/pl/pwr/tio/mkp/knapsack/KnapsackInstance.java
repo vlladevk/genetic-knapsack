@@ -3,40 +3,20 @@ package pl.pwr.tio.mkp.knapsack;
 import java.util.List;
 import java.util.OptionalDouble;
 
-/**
- * Instance of the multidimensional knapsack problem (instancja problemu).
- * Holds the items, the capacity of every constraint and, if known, the optimal value.
- */
+// Problem instance (instancja problemu): items, capacity (pojemność) of every
+// constraint and the optimal value if known.
 public final class KnapsackInstance {
 
-    /**
-     * Name of the instance, used in results and plots.
-     */
     private final String name;
 
-    /**
-     * Items, the item at position {@code j} has index {@code j}.
-     */
+    // item at position j has index j
     private final List<Item> items;
 
-    /**
-     * Capacity of every constraint (pojemność).
-     */
     private final double[] capacities;
 
-    /**
-     * Optimal or best known value, empty when unknown.
-     */
+    // optimal or best known, empty if unknown
     private final OptionalDouble optimum;
 
-    /**
-     * Ctor.
-     *
-     * @param name Name of the instance
-     * @param items Items, the item at position {@code j} must have index {@code j}
-     * @param capacities Capacity of every constraint
-     * @param optimum Optimal or best known value, empty when unknown
-     */
     public KnapsackInstance(final String name, final List<Item> items,
         final double[] capacities, final OptionalDouble optimum) {
         if (items.isEmpty()) {
@@ -59,78 +39,37 @@ public final class KnapsackInstance {
         this.optimum = optimum;
     }
 
-    /**
-     * Same instance with another optimal or best known value.
-     *
-     * @param value Optimal or best known value
-     * @return New instance
-     */
     public KnapsackInstance withOptimum(final double value) {
         return new KnapsackInstance(this.name, this.items, this.capacities,
             OptionalDouble.of(value));
     }
 
-    /**
-     * Name of the instance.
-     *
-     * @return Name
-     */
     public String name() {
         return this.name;
     }
 
-    /**
-     * Number of items, equal to the length of the chromosome.
-     *
-     * @return Number of items (n)
-     */
+    // n = chromosome length
     public int size() {
         return this.items.size();
     }
 
-    /**
-     * Number of constraints.
-     *
-     * @return Number of constraints (m)
-     */
+    // m = number of constraints
     public int dimensions() {
         return this.capacities.length;
     }
 
-    /**
-     * All items.
-     *
-     * @return Unmodifiable list of items
-     */
     public List<Item> items() {
         return this.items;
     }
 
-    /**
-     * One item.
-     *
-     * @param index Index of the item
-     * @return Item
-     */
     public Item item(final int index) {
         return this.items.get(index);
     }
 
-    /**
-     * Capacity of one constraint.
-     *
-     * @param constraint Index of the constraint
-     * @return Capacity
-     */
     public double capacity(final int constraint) {
         return this.capacities[constraint];
     }
 
-    /**
-     * Optimal or best known value.
-     *
-     * @return Value, empty when unknown
-     */
     public OptionalDouble optimum() {
         return this.optimum;
     }

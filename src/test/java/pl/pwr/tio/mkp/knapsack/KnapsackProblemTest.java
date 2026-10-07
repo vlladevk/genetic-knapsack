@@ -11,10 +11,8 @@ import org.junit.jupiter.api.Test;
 import pl.pwr.tio.mkp.genetic.Chromosome;
 import pl.pwr.tio.mkp.genetic.Individual;
 
-/**
- * Fitness on the toy example: tent, food, pot, torch, book, guitar;
- * capacity 10 kg and 10 l; optimum 23 = tent + food + torch.
- */
+// Toy example: tent, food, pot, torch, book, guitar; capacity 10 kg and 10 l;
+// optimum 23 = tent + food + torch.
 final class KnapsackProblemTest {
 
     private static final double DELTA = 1e-9;

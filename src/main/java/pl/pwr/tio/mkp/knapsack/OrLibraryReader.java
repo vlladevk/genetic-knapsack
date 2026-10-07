@@ -8,28 +8,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.OptionalDouble;
 
-/**
- * Reader of multidimensional knapsack instances in the OR-Library format.
- *
- * <p>Format: number of problems, then for every problem: {@code n m optimum},
- * {@code n} values, {@code m} rows of {@code n} weights, {@code m} capacities.
- * Optimum {@code 0} means that it is unknown.</p>
- */
+// Reads OR-Library files: count, then per problem: n m optimum, n values,
+// m rows of n weights, m capacities. Optimum 0 = unknown.
 public final class OrLibraryReader {
 
-    /**
-     * Prefix of comment lines in files with best known values.
-     */
     private static final String COMMENT = "#";
 
-    /**
-     * Reads all instances from a file.
-     * Instances are named {@code <file name>-<number>}, numbered from 0.
-     *
-     * @param file File in the OR-Library format
-     * @return Instances in the order they appear in the file
-     * @throws IOException If the file can not be read
-     */
+    // instances are named <file>-<number>, from 0
     public List<KnapsackInstance> read(final Path file) throws IOException {
         final Tokens tokens = new Tokens(Files.readString(file, StandardCharsets.UTF_8));
         final String prefix = file.getFileName().toString().replaceFirst("\\.[^.]*$", "");
@@ -41,16 +26,7 @@ public final class OrLibraryReader {
         return instances;
     }
 
-    /**
-     * Reads instances and sets their best known values from a second file.
-     * The second file has one value per line, in the same order as the instances;
-     * lines starting with {@code #} are ignored.
-     *
-     * @param file File in the OR-Library format
-     * @param best File with best known values
-     * @return Instances with best known values
-     * @throws IOException If a file can not be read
-     */
+    // best: one value per line in the same order, lines with # are skipped
     public List<KnapsackInstance> read(final Path file, final Path best) throws IOException {
         final List<KnapsackInstance> instances = this.read(file);
         final List<String> values = Files.readAllLines(best, StandardCharsets.UTF_8).stream()
@@ -68,13 +44,6 @@ public final class OrLibraryReader {
         return result;
     }
 
-    /**
-     * Reads one instance.
-     *
-     * @param tokens Tokens positioned at the start of the instance
-     * @param name Name of the instance
-     * @return Instance
-     */
     private static KnapsackInstance instance(final Tokens tokens, final String name) {
         final int size = tokens.nextInt();
         final int dimensions = tokens.nextInt();
@@ -100,54 +69,24 @@ public final class OrLibraryReader {
         return new KnapsackInstance(name, items, capacities, known);
     }
 
-    /**
-     * Whitespace separated tokens of a file.
-     */
     private static final class Tokens {
 
-        /**
-         * All tokens.
-         */
         private final String[] all;
 
-        /**
-         * Position of the next token.
-         */
         private int position;
 
-        /**
-         * Ctor.
-         *
-         * @param text Text to split
-         */
         Tokens(final String text) {
             this.all = text.trim().split("\\s+");
         }
 
-        /**
-         * Next token as an integer.
-         *
-         * @return Integer
-         */
         int nextInt() {
             return Integer.parseInt(this.next());
         }
 
-        /**
-         * Next token as a number.
-         *
-         * @return Number
-         */
         double nextDouble() {
             return Double.parseDouble(this.next());
         }
 
-        /**
-         * Next tokens as numbers.
-         *
-         * @param count How many numbers to read
-         * @return Numbers
-         */
         double[] nextDoubles(final int count) {
             final double[] numbers = new double[count];
             for (int idx = 0; idx < count; ++idx) {
@@ -156,11 +95,6 @@ public final class OrLibraryReader {
             return numbers;
         }
 
-        /**
-         * Next token.
-         *
-         * @return Token
-         */
         private String next() {
             if (this.position >= this.all.length) {
                 throw new IllegalStateException("Unexpected end of file");

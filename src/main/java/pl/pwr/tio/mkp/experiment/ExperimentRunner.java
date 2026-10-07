@@ -12,48 +12,24 @@ import pl.pwr.tio.mkp.engine.EvolutionResult;
 import pl.pwr.tio.mkp.genetic.Individual;
 import pl.pwr.tio.mkp.knapsack.KnapsackInstance;
 
-/**
- * Runs every configuration several times (with seeds 1, 2, ..., runs) on one instance
- * and writes the results to {@code <output>/<instance>/}:
- * <ul>
- *   <li>{@code history.csv}: statistics of every generation of every run,</li>
- *   <li>{@code runs.csv}: one row per run with the best feasible value found.</li>
- * </ul>
- */
+// Runs every configuration with seeds 1..runs and writes <output>/<instance>/
+// history.csv (every generation) and runs.csv (one row per run).
 public final class ExperimentRunner {
 
-    /**
-     * Columns of {@code history.csv}.
-     */
     private static final String[] HISTORY = {
         "series", "label", "seed", "generation", "best", "average", "median", "worst",
         "best_feasible", "best_ever", "feasible_share",
     };
 
-    /**
-     * Columns of {@code runs.csv}.
-     */
     private static final String[] RUNS = {
         "instance", "series", "label", "population", "generations", "tournament", "pc", "pm",
         "penalty", "seed", "best", "found_at", "optimum", "feasible_share",
     };
 
-    /**
-     * Directory for the results.
-     */
     private final Path output;
 
-    /**
-     * Number of runs of every configuration.
-     */
     private final int runs;
 
-    /**
-     * Ctor.
-     *
-     * @param output Directory for the results
-     * @param runs Number of runs of every configuration, at least 1
-     */
     public ExperimentRunner(final Path output, final int runs) {
         if (runs < 1) {
             throw new IllegalArgumentException("Number of runs must be at least 1: " + runs);
@@ -62,14 +38,6 @@ public final class ExperimentRunner {
         this.runs = runs;
     }
 
-    /**
-     * Runs all configurations on an instance and writes the CSV files.
-     *
-     * @param instance Instance
-     * @param configs Configurations
-     * @return Outcomes of all runs
-     * @throws IOException If the results can not be written
-     */
     public List<RunOutcome> run(final KnapsackInstance instance, final List<RunConfig> configs)
         throws IOException {
         final Path dir = this.output.resolve(instance.name());
@@ -94,16 +62,6 @@ public final class ExperimentRunner {
         return outcomes;
     }
 
-    /**
-     * One run: generations 0..G, the stop condition is the number of generations.
-     *
-     * @param instance Instance
-     * @param config Configuration
-     * @param seed Seed
-     * @param history Where to write statistics of every generation
-     * @return Outcome of the run
-     * @throws IOException If the history can not be written
-     */
     private static RunOutcome single(final KnapsackInstance instance, final RunConfig config,
         final long seed, final CsvWriter history) throws IOException {
         final Iterator<EvolutionResult> generations = config.engine(instance, seed).stream()
@@ -129,12 +87,6 @@ public final class ExperimentRunner {
         return new RunOutcome(config, seed, best, found, share);
     }
 
-    /**
-     * Fitness of an optional individual.
-     *
-     * @param individual Individual
-     * @return Its fitness, empty when there is no individual
-     */
     private static OptionalDouble fitness(final Optional<Individual> individual) {
         return individual.map(ind -> OptionalDouble.of(ind.fitness()))
             .orElseGet(OptionalDouble::empty);

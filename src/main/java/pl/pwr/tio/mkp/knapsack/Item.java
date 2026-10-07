@@ -3,22 +3,10 @@ package pl.pwr.tio.mkp.knapsack;
 import java.util.Arrays;
 import java.util.Objects;
 
-/**
- * Item (przedmiot) of the multidimensional knapsack problem.
- *
- * @param index Position of the item in the instance, equal to the gene index
- * @param value Value of the item (wartość)
- * @param weights Weight of the item for every constraint (waga), one entry per constraint
- */
+// Item (przedmiot): value (wartość) and one weight (waga) per constraint.
+// index = position in the instance = gene index.
 public record Item(int index, double value, double[] weights) {
 
-    /**
-     * Validates the item and copies the weights.
-     *
-     * @param index Position of the item in the instance
-     * @param value Value of the item
-     * @param weights Weight of the item for every constraint
-     */
     public Item {
         if (index < 0) {
             throw new IllegalArgumentException("Index must not be negative: " + index);
@@ -32,31 +20,16 @@ public record Item(int index, double value, double[] weights) {
         weights = weights.clone();
     }
 
-    /**
-     * Weights of the item.
-     *
-     * @return Copy of the weights, one entry per constraint
-     */
     @Override
+    // copy, so the record stays immutable
     public double[] weights() {
         return this.weights.clone();
     }
 
-    /**
-     * Weight of the item for one constraint.
-     *
-     * @param constraint Index of the constraint
-     * @return Weight of the item for this constraint
-     */
     public double weight(final int constraint) {
         return this.weights[constraint];
     }
 
-    /**
-     * Number of constraints the item has weights for.
-     *
-     * @return Number of constraints
-     */
     public int dimensions() {
         return this.weights.length;
     }

@@ -1,14 +1,10 @@
 package pl.pwr.tio.mkp.knapsack;
 
-/**
- * Death penalty (kara śmierci): every infeasible solution gets the same, worst fitness.
- * Used only for comparison with {@link LinearPenalty} in the experiments.
- */
+// Death penalty (kara śmierci): every infeasible solution gets the same worst fitness.
+// Only for comparison with LinearPenalty.
 public final class DeathPenalty implements Penalty {
 
-    /**
-     * Fitness of every infeasible solution, lower than the value of any feasible one.
-     */
+    // below the value of any feasible solution
     private static final double REJECTED = -1;
 
     @Override

@@ -7,18 +7,7 @@ import pl.pwr.tio.mkp.operator.BitFlipMutator;
 import pl.pwr.tio.mkp.operator.SinglePointCrossover;
 import pl.pwr.tio.mkp.selector.TournamentSelector;
 
-/**
- * Parameters of the genetic algorithm used in one configuration of an experiment.
- *
- * @param series Experiment series the configuration belongs to, for example {@code A-pc}
- * @param label Short description of what differs in this configuration, for example {@code pc=0.7}
- * @param populationSize Number of individuals in a generation (P)
- * @param generations Number of generations after the initial one (stop condition)
- * @param tournamentSize Tournament size (k)
- * @param crossover Probability of crossover (pc)
- * @param mutation Probability of mutation of one gene (pm)
- * @param penalty Penalty function
- */
+// Parameters of one configuration; generations = stop condition (warunek stopu).
 public record RunConfig(
     String series,
     String label,
@@ -30,13 +19,6 @@ public record RunConfig(
     PenaltyType penalty
 ) {
 
-    /**
-     * Engine for one run of this configuration.
-     *
-     * @param instance Instance to solve
-     * @param seed Seed of the run
-     * @return Engine
-     */
     public Engine engine(final KnapsackInstance instance, final long seed) {
         return new Engine.Builder(new KnapsackProblem(instance, this.penalty.create(instance)))
             .populationSize(this.populationSize)

@@ -3,37 +3,18 @@ package pl.pwr.tio.mkp.experiment;
 import java.io.IOException;
 import java.nio.file.Path;
 
-/**
- * Draws plots and summary tables by calling the Python script {@code scripts/plots.py}.
- * Plotting is part of the research, not of the algorithm, so it may use libraries
- * (pandas, matplotlib). When Python is not available the CSV files are still there.
- */
+// Calls scripts/plots.py. If Python is missing, the CSV files are still there.
 public final class Plots {
 
-    /**
-     * Path of the script, relative to the working directory.
-     */
+    // relative to the working directory
     private static final Path SCRIPT = Path.of("scripts", "plots.py");
 
-    /**
-     * Command starting Python.
-     */
     private final String python;
 
-    /**
-     * Ctor.
-     *
-     * @param python Command starting Python, for example {@code python} or {@code python3}
-     */
     public Plots(final String python) {
         this.python = python;
     }
 
-    /**
-     * Runs the script on a directory with results.
-     *
-     * @param results Directory with one subdirectory per instance
-     */
     public void draw(final Path results) {
         boolean success;
         try {

@@ -5,61 +5,28 @@ import java.util.List;
 import java.util.Locale;
 import pl.pwr.tio.mkp.knapsack.KnapsackInstance;
 
-/**
- * Series of the comparative study (badania porównawcze).
- *
- * <p>Every series changes one parameter and keeps the others at the base values:
- * P = 30, G = 1000, tournament of 2, pc = 0.9, pm = 1/n, linear penalty.</p>
- * <ul>
- *   <li>A: probability of crossover pc,</li>
- *   <li>B: probability of mutation pm,</li>
- *   <li>C: population size P,</li>
- *   <li>D: penalty function (linear penalty against death penalty).</li>
- * </ul>
- */
+// Comparative study (badania porównawcze): each series changes one parameter.
+// Base: P = 30, G = 1000, tournament 2, pc = 0.9, pm = 1/n, linear penalty.
+// A: pc, B: pm, C: P, D: linear vs death penalty.
 public final class ExperimentPlan {
 
-    /**
-     * Base population size, small as required by the task.
-     */
+    // small, as the task requires
     public static final int POPULATION = 30;
 
-    /**
-     * Number of generations after the initial one.
-     */
+    // without generation 0
     public static final int GENERATIONS = 1000;
 
-    /**
-     * Tournament size.
-     */
     public static final int TOURNAMENT = 2;
 
-    /**
-     * Base probability of crossover.
-     */
     public static final double CROSSOVER = 0.9;
 
-    /**
-     * Probabilities of crossover compared in series A.
-     */
     private static final double[] CROSSOVERS = {0.0, 0.5, 0.7, 0.9, 1.0};
 
-    /**
-     * Probabilities of mutation compared in series B, as multiples of 1/n.
-     */
+    // multiples of 1/n
     private static final double[] MUTATIONS_PER_N = {0.0, 0.5, 1.0, 2.0, 5.0, 10.0};
 
-    /**
-     * Population sizes compared in series C.
-     */
     private static final int[] POPULATIONS = {10, 30, 50};
 
-    /**
-     * All configurations for an instance.
-     *
-     * @param instance Instance, its size sets the base probability of mutation 1/n
-     * @return Configurations of all series
-     */
     public List<RunConfig> configs(final KnapsackInstance instance) {
         final double mutation = 1.0 / instance.size();
         final List<RunConfig> configs = new ArrayList<>();
@@ -85,17 +52,6 @@ public final class ExperimentPlan {
         return configs;
     }
 
-    /**
-     * Configuration with the base number of generations and tournament size.
-     *
-     * @param series Series
-     * @param label Label
-     * @param population Population size
-     * @param crossover Probability of crossover
-     * @param mutation Probability of mutation
-     * @param penalty Penalty function
-     * @return Configuration
-     */
     private static RunConfig config(final String series, final String label,
         final int population, final double crossover, final double mutation,
         final PenaltyType penalty) {
@@ -103,12 +59,6 @@ public final class ExperimentPlan {
             ExperimentPlan.TOURNAMENT, crossover, mutation, penalty);
     }
 
-    /**
-     * Number without a trailing ".0", for labels.
-     *
-     * @param number Number
-     * @return Text
-     */
     private static String trim(final double number) {
         final String text = String.valueOf(number);
         return text.replaceFirst("\\.0$", "");

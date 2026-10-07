@@ -5,25 +5,12 @@ import java.util.List;
 import java.util.Random;
 import pl.pwr.tio.mkp.genetic.Chromosome;
 
-/**
- * Bit-flip mutation (mutacja przez negację bitu).
- *
- * <p>Every gene of every chromosome is flipped independently with probability
- * {@code pm} (prawdopodobieństwo mutacji), so on average {@code pm * n} genes
- * change in a chromosome of length {@code n}.</p>
- */
+// Bit-flip mutation (mutacja przez negację bitu): every gene flips with
+// probability pm, on average pm * n genes per chromosome.
 public final class BitFlipMutator implements GeneticOperator {
 
-    /**
-     * Probability of flipping one gene (pm).
-     */
     private final double probability;
 
-    /**
-     * Ctor.
-     *
-     * @param probability Probability of flipping one gene (pm), in [0, 1]
-     */
     public BitFlipMutator(final double probability) {
         this.probability = Probability.check(probability);
     }
@@ -37,13 +24,7 @@ public final class BitFlipMutator implements GeneticOperator {
         return mutated;
     }
 
-    /**
-     * Mutates one chromosome.
-     *
-     * @param chromosome Chromosome
-     * @param random Random number generator
-     * @return New chromosome, or the same one when no gene was flipped
-     */
+    // same object if nothing was flipped
     private Chromosome mutate(final Chromosome chromosome, final Random random) {
         final boolean[] genes = chromosome.genes();
         boolean changed = false;

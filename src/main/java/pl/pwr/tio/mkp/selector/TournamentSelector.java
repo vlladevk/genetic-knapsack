@@ -5,26 +5,13 @@ import java.util.List;
 import java.util.Random;
 import pl.pwr.tio.mkp.genetic.Individual;
 
-/**
- * Tournament selection (selekcja turniejowa).
- *
- * <p>Each parent is the winner of a tournament: {@code size} individuals are drawn
- * at random (with replacement) and the one with the highest fitness wins; a tie is won
- * by the individual drawn first. The size of the tournament controls selection pressure
- * (nacisk selekcyjny): size 1 is random choice, bigger sizes favour the best more.</p>
- */
+// Tournament selection (selekcja turniejowa): draw size individuals with
+// replacement, the best wins (tie: the first drawn).
+// size = selection pressure (nacisk selekcyjny), 1 = random choice.
 public final class TournamentSelector implements Selector {
 
-    /**
-     * Number of individuals in one tournament (rozmiar turnieju).
-     */
     private final int size;
 
-    /**
-     * Ctor.
-     *
-     * @param size Number of individuals in one tournament, at least 1
-     */
     public TournamentSelector(final int size) {
         if (size < 1) {
             throw new IllegalArgumentException("Tournament size must be at least 1: " + size);
@@ -45,13 +32,6 @@ public final class TournamentSelector implements Selector {
         return winners;
     }
 
-    /**
-     * Plays one tournament.
-     *
-     * @param population Population
-     * @param random Random number generator
-     * @return Winner
-     */
     private Individual tournament(final List<Individual> population, final Random random) {
         Individual winner = population.get(random.nextInt(population.size()));
         for (int round = 1; round < this.size; ++round) {

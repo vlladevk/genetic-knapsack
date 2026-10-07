@@ -10,31 +10,15 @@ import java.util.Map;
 import java.util.OptionalDouble;
 import pl.pwr.tio.mkp.knapsack.KnapsackInstance;
 
-/**
- * Prints a short summary of the experiments. For every configuration: in how many runs
- * a feasible solution was found, then over those runs the mean, standard deviation,
- * minimum and maximum of the best value, how many runs reached the optimum and the mean
- * relative gap to it (odchylenie od optimum).
- */
+// Summary per configuration: feasible runs, then over them mean, std, min, max,
+// hits of the optimum and mean gap to it (odchylenie od optimum) in %.
 public final class SummaryTable {
 
-    /**
-     * Values closer to the optimum than this are treated as equal to it.
-     */
+    // closer than this = equal to the optimum
     private static final double TOLERANCE = 1e-6;
 
-    /**
-     * Factor turning a fraction into percent.
-     */
     private static final double PERCENT = 100.0;
 
-    /**
-     * Prints the summary.
-     *
-     * @param instance Instance the runs were made on
-     * @param outcomes Outcomes of all runs, in the order of configurations
-     * @param out Where to print
-     */
     public void print(final KnapsackInstance instance, final List<RunOutcome> outcomes,
         final PrintStream out) {
         final Map<String, List<RunOutcome>> groups = new LinkedHashMap<>();
@@ -52,14 +36,6 @@ public final class SummaryTable {
         }
     }
 
-    /**
-     * One line of the summary.
-     *
-     * @param name Name of the configuration
-     * @param runs Its runs
-     * @param optimum Optimal or best known value
-     * @return Formatted line
-     */
     private static String line(final String name, final List<RunOutcome> runs,
         final OptionalDouble optimum) {
         final double[] values = runs.stream()
@@ -91,13 +67,7 @@ public final class SummaryTable {
         return line;
     }
 
-    /**
-     * Sample standard deviation.
-     *
-     * @param values Values
-     * @param mean Their mean
-     * @return Standard deviation, {@code 0} for a single value
-     */
+    // sample standard deviation
     private static double deviation(final double[] values, final double mean) {
         double squares = 0;
         for (final double value : values) {

@@ -1,30 +1,16 @@
 package pl.pwr.tio.mkp.knapsack;
 
-/**
- * Linear penalty (liniowa funkcja kary): {@code fitness = value - rho * violation}.
- *
- * <p>The coefficient rho (współczynnik kary) works as an exchange rate between
- * an excess unit of weight and lost value. A solution that is only slightly too heavy
- * keeps a reasonable fitness, so selection can still tell "almost fits" from
- * "far too heavy".</p>
- */
+// Linear penalty (liniowa funkcja kary): fitness = value - rho * violation.
+// A slightly too heavy solution keeps a reasonable fitness, so selection can
+// still tell "almost fits" from "far too heavy".
 public final class LinearPenalty implements Penalty {
 
-    /**
-     * Coefficient used when no item has a positive weight.
-     */
+    // when no item has a positive weight
     private static final double DEFAULT_COEFFICIENT = 1.0;
 
-    /**
-     * Penalty per unit of violation (rho).
-     */
+    // rho, penalty coefficient (współczynnik kary)
     private final double coefficient;
 
-    /**
-     * Ctor.
-     *
-     * @param coefficient Penalty per unit of violation (rho), positive
-     */
     public LinearPenalty(final double coefficient) {
         if (!(coefficient > 0)) {
             throw new IllegalArgumentException("Coefficient must be positive: " + coefficient);
@@ -32,15 +18,8 @@ public final class LinearPenalty implements Penalty {
         this.coefficient = coefficient;
     }
 
-    /**
-     * Penalty with rho equal to the largest value per unit of weight,
-     * {@code max over items j and constraints i of value(j) / weight(i, j)}.
-     * One excess unit of weight can not bring more value than rho,
-     * so this penalty makes overloading unprofitable in most cases.
-     *
-     * @param instance Instance
-     * @return Penalty adjusted to the instance
-     */
+    // rho = max value(j) / weight(i, j): one unit of overload can not bring more
+    // value than rho, so overloading does not pay off.
     public static LinearPenalty of(final KnapsackInstance instance) {
         double rho = 0;
         for (final Item item : instance.items()) {
@@ -57,11 +36,6 @@ public final class LinearPenalty implements Penalty {
         return new LinearPenalty(rho);
     }
 
-    /**
-     * Penalty per unit of violation.
-     *
-     * @return Coefficient rho
-     */
     public double coefficient() {
         return this.coefficient;
     }
