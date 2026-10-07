@@ -8,14 +8,14 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
-import pl.pwr.tio.mkp.alterer.BitFlipMutator;
-import pl.pwr.tio.mkp.alterer.SinglePointCrossover;
 import pl.pwr.tio.mkp.genetic.Individual;
 import pl.pwr.tio.mkp.knapsack.Item;
 import pl.pwr.tio.mkp.knapsack.KnapsackInstance;
 import pl.pwr.tio.mkp.knapsack.KnapsackProblem;
 import pl.pwr.tio.mkp.knapsack.LinearPenalty;
 import pl.pwr.tio.mkp.knapsack.OrLibraryReader;
+import pl.pwr.tio.mkp.operator.BitFlipMutator;
+import pl.pwr.tio.mkp.operator.SinglePointCrossover;
 import pl.pwr.tio.mkp.selector.TournamentSelector;
 
 final class EngineTest {
@@ -58,7 +58,7 @@ final class EngineTest {
         return new Engine.Builder<>(new KnapsackProblem(instance, LinearPenalty.of(instance)))
             .populationSize(10)
             .selector(new TournamentSelector(2))
-            .alterers(new SinglePointCrossover(0.9), new BitFlipMutator(1.0 / instance.size()))
+            .operators(new SinglePointCrossover(0.9), new BitFlipMutator(1.0 / instance.size()))
             .seed(seed)
             .build();
     }

@@ -4,10 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.stream.Stream;
-import pl.pwr.tio.mkp.alterer.Alterer;
 import pl.pwr.tio.mkp.genetic.Chromosome;
 import pl.pwr.tio.mkp.genetic.Individual;
 import pl.pwr.tio.mkp.genetic.Problem;
+import pl.pwr.tio.mkp.operator.GeneticOperator;
 import pl.pwr.tio.mkp.selector.Selector;
 import pl.pwr.tio.mkp.selector.TournamentSelector;
 
@@ -44,7 +44,7 @@ public final class Engine<T> {
     /**
      * Operators applied in order to the selected parents.
      */
-    private final List<Alterer> alterers;
+    private final List<GeneticOperator> operators;
 
     /**
      * Seed of the random number generator (ziarno generatora).
@@ -60,7 +60,7 @@ public final class Engine<T> {
         this.problem = builder.problem;
         this.populationSize = builder.populationSize;
         this.selector = builder.selector;
-        this.alterers = List.copyOf(builder.alterers);
+        this.operators = List.copyOf(builder.operators);
         this.seed = builder.seed;
     }
 
@@ -103,8 +103,8 @@ public final class Engine<T> {
         for (final Individual parent : parents) {
             chromosomes.add(parent.chromosome());
         }
-        for (final Alterer alterer : this.alterers) {
-            chromosomes = alterer.alter(chromosomes, random);
+        for (final GeneticOperator operator : this.operators) {
+            chromosomes = operator.apply(chromosomes, random);
         }
         final List<Individual> children = new ArrayList<>(chromosomes.size());
         for (final Chromosome chromosome : chromosomes) {
@@ -138,7 +138,7 @@ public final class Engine<T> {
         /**
          * Operators applied in order.
          */
-        private final List<Alterer> alterers = new ArrayList<>();
+        private final List<GeneticOperator> operators = new ArrayList<>();
 
         /**
          * Number of individuals in a generation.
@@ -192,12 +192,12 @@ public final class Engine<T> {
         /**
          * Sets the operators, applied in the given order.
          *
-         * @param operators Operators, usually crossover and then mutation
+         * @param list Operators, usually crossover and then mutation
          * @return This builder
          */
-        public Builder<T> alterers(final Alterer... operators) {
-            this.alterers.clear();
-            this.alterers.addAll(List.of(operators));
+        public Builder<T> operators(final GeneticOperator... list) {
+            this.operators.clear();
+            this.operators.addAll(List.of(list));
             return this;
         }
 

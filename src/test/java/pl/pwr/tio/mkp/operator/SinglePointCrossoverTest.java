@@ -1,4 +1,4 @@
-package pl.pwr.tio.mkp.alterer;
+package pl.pwr.tio.mkp.operator;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
@@ -21,7 +21,7 @@ final class SinglePointCrossoverTest {
         final Random random = new Random(1);
         for (int run = 0; run < 100; ++run) {
             final List<Chromosome> children = new SinglePointCrossover(1.0)
-                .alter(List.of(ONES, ZEROS), random);
+                .apply(List.of(ONES, ZEROS), random);
             final String first = children.get(0).toString();
             final String second = children.get(1).toString();
             assertTrue(first.matches("1+0+"), first);
@@ -36,7 +36,7 @@ final class SinglePointCrossoverTest {
         final boolean[] seen = new boolean[7];
         for (int run = 0; run < 1000; ++run) {
             final Chromosome child = new SinglePointCrossover(1.0)
-                .alter(List.of(ONES, ZEROS), random).get(0);
+                .apply(List.of(ONES, ZEROS), random).get(0);
             seen[child.toString().indexOf('0')] = true;
         }
         for (int cut = 1; cut <= 5; ++cut) {
@@ -48,13 +48,13 @@ final class SinglePointCrossoverTest {
     @Test
     void zeroProbabilityCopiesParents() {
         final List<Chromosome> parents = List.of(ONES, ZEROS, ONES);
-        assertEquals(parents, new SinglePointCrossover(0.0).alter(parents, new Random(3)));
+        assertEquals(parents, new SinglePointCrossover(0.0).apply(parents, new Random(3)));
     }
 
     @Test
     void oddPopulationKeepsItsSize() {
         final List<Chromosome> children = new SinglePointCrossover(1.0)
-            .alter(List.of(ONES, ZEROS, ONES), new Random(4));
+            .apply(List.of(ONES, ZEROS, ONES), new Random(4));
         assertEquals(3, children.size());
         assertEquals(ONES, children.get(2));
     }
@@ -63,7 +63,7 @@ final class SinglePointCrossoverTest {
     void doesNotChangeParents() {
         final List<Chromosome> parents = List.of(ONES, ZEROS);
         final List<Chromosome> children = new SinglePointCrossover(1.0)
-            .alter(parents, new Random(5));
+            .apply(parents, new Random(5));
         assertNotEquals(parents, children);
         assertEquals("111111", ONES.toString());
         assertEquals("000000", ZEROS.toString());

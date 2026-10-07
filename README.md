@@ -30,7 +30,7 @@ The answer of a run is the best **feasible** solution found in any generation.
 pl.pwr.tio.mkp
 ├── genetic/     Chromosome, Individual, Codec, Problem           (independent of the knapsack)
 ├── selector/    Selector, TournamentSelector
-├── alterer/     Alterer, Crossover, SinglePointCrossover, BitFlipMutator
+├── operator/    GeneticOperator, Crossover, SinglePointCrossover, BitFlipMutator
 ├── engine/      Engine (main loop, stream of generations), EvolutionResult
 ├── knapsack/    Item, KnapsackInstance, OrLibraryReader, KnapsackCodec,
 │                KnapsackProblem, Penalty, LinearPenalty, DeathPenalty

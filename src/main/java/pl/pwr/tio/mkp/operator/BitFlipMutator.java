@@ -1,4 +1,4 @@
-package pl.pwr.tio.mkp.alterer;
+package pl.pwr.tio.mkp.operator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,7 +12,7 @@ import pl.pwr.tio.mkp.genetic.Chromosome;
  * {@code pm} (prawdopodobieństwo mutacji), so on average {@code pm * n} genes
  * change in a chromosome of length {@code n}.</p>
  */
-public final class BitFlipMutator implements Alterer {
+public final class BitFlipMutator implements GeneticOperator {
 
     /**
      * Probability of flipping one gene (pm).
@@ -38,7 +38,7 @@ public final class BitFlipMutator implements Alterer {
     }
 
     @Override
-    public List<Chromosome> alter(final List<Chromosome> population, final Random random) {
+    public List<Chromosome> apply(final List<Chromosome> population, final Random random) {
         final List<Chromosome> mutated = new ArrayList<>(population.size());
         for (final Chromosome chromosome : population) {
             mutated.add(this.mutate(chromosome, random));

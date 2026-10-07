@@ -1,12 +1,12 @@
 package pl.pwr.tio.mkp.experiment;
 
 import java.util.List;
-import pl.pwr.tio.mkp.alterer.BitFlipMutator;
-import pl.pwr.tio.mkp.alterer.SinglePointCrossover;
 import pl.pwr.tio.mkp.engine.Engine;
 import pl.pwr.tio.mkp.knapsack.Item;
 import pl.pwr.tio.mkp.knapsack.KnapsackInstance;
 import pl.pwr.tio.mkp.knapsack.KnapsackProblem;
+import pl.pwr.tio.mkp.operator.BitFlipMutator;
+import pl.pwr.tio.mkp.operator.SinglePointCrossover;
 import pl.pwr.tio.mkp.selector.TournamentSelector;
 
 /**
@@ -43,7 +43,7 @@ public record RunConfig(
         return new Engine.Builder<>(new KnapsackProblem(instance, this.penalty.create(instance)))
             .populationSize(this.populationSize)
             .selector(new TournamentSelector(this.tournamentSize))
-            .alterers(new SinglePointCrossover(this.crossover), new BitFlipMutator(this.mutation))
+            .operators(new SinglePointCrossover(this.crossover), new BitFlipMutator(this.mutation))
             .seed(seed)
             .build();
     }

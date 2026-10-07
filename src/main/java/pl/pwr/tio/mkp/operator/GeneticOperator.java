@@ -1,4 +1,4 @@
-package pl.pwr.tio.mkp.alterer;
+package pl.pwr.tio.mkp.operator;
 
 import java.util.List;
 import java.util.Random;
@@ -13,7 +13,7 @@ import pl.pwr.tio.mkp.genetic.Chromosome;
  * its own probability, because its meaning differs between operators
  * (per pair of parents for crossover, per gene for bit-flip mutation).</p>
  */
-public interface Alterer {
+public interface GeneticOperator {
 
     /**
      * Applies the operator.
@@ -22,5 +22,5 @@ public interface Alterer {
      * @param random Random number generator of the run
      * @return Changed population of the same size
      */
-    List<Chromosome> alter(List<Chromosome> population, Random random);
+    List<Chromosome> apply(List<Chromosome> population, Random random);
 }

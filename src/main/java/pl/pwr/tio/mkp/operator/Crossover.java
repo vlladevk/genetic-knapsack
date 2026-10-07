@@ -1,4 +1,4 @@
-package pl.pwr.tio.mkp.alterer;
+package pl.pwr.tio.mkp.operator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,7 +14,7 @@ import pl.pwr.tio.mkp.genetic.Chromosome;
  * With an odd population the last parent is copied. Subclasses only define how two
  * parents are combined.</p>
  */
-public abstract class Crossover implements Alterer {
+public abstract class Crossover implements GeneticOperator {
 
     /**
      * Number of parents taking part in one crossover.
@@ -45,7 +45,7 @@ public abstract class Crossover implements Alterer {
     }
 
     @Override
-    public final List<Chromosome> alter(final List<Chromosome> population, final Random random) {
+    public final List<Chromosome> apply(final List<Chromosome> population, final Random random) {
         final List<Chromosome> offspring = new ArrayList<>(population.size());
         int first = 0;
         while (first + 1 < population.size()) {

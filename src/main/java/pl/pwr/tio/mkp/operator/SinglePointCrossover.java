@@ -1,4 +1,4 @@
-package pl.pwr.tio.mkp.alterer;
+package pl.pwr.tio.mkp.operator;
 
 import java.util.List;
 import java.util.Random;
