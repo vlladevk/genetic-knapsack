@@ -9,6 +9,8 @@ import pl.pwr.tio.mkp.genetic.Chromosome;
 // probability pm, on average pm * n genes per chromosome.
 public final class BitFlipMutator implements GeneticOperator {
 
+    // pm, mutation probability (prawdopodobieństwo mutacji): chance that one gene
+    // is flipped, usually 1/n
     private final double probability;
 
     public BitFlipMutator(final double probability) {

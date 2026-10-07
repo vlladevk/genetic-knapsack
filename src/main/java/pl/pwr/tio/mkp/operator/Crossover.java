@@ -12,6 +12,8 @@ public abstract class Crossover implements GeneticOperator {
 
     private static final int PARENTS = 2;
 
+    // pc, crossover probability (prawdopodobieństwo krzyżowania): chance that a pair
+    // of parents is crossed, otherwise both are copied unchanged
     private final double probability;
 
     protected Crossover(final double probability) {

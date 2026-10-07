@@ -18,6 +18,7 @@ public final class Engine {
 
     private final Problem<?> problem;
 
+    // P, population size (rozmiar populacji)
     private final int populationSize;
 
     private final Selector selector;

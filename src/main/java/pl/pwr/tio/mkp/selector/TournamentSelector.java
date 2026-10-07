@@ -10,6 +10,7 @@ import pl.pwr.tio.mkp.genetic.Individual;
 // size = selection pressure (nacisk selekcyjny), 1 = random choice.
 public final class TournamentSelector implements Selector {
 
+    // k, tournament size (rozmiar turnieju)
     private final int size;
 
     public TournamentSelector(final int size) {
