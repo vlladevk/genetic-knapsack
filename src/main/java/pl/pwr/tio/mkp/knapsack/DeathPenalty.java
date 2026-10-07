@@ -21,9 +21,4 @@ public final class DeathPenalty implements Penalty {
         }
         return fitness;
     }
-
-    @Override
-    public String name() {
-        return "death";
-    }
 }

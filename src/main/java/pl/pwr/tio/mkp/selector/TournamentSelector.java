@@ -32,15 +32,6 @@ public final class TournamentSelector implements Selector {
         this.size = size;
     }
 
-    /**
-     * Number of individuals in one tournament.
-     *
-     * @return Tournament size
-     */
-    public int size() {
-        return this.size;
-    }
-
     @Override
     public List<Individual> select(final List<Individual> population, final int count,
         final Random random) {

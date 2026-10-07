@@ -70,9 +70,4 @@ public final class LinearPenalty implements Penalty {
     public double apply(final double value, final double violation) {
         return value - this.coefficient * violation;
     }
-
-    @Override
-    public String name() {
-        return "linear";
-    }
 }

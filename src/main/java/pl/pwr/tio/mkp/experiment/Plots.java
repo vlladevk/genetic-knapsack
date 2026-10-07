@@ -33,9 +33,8 @@ public final class Plots {
      * Runs the script on a directory with results.
      *
      * @param results Directory with one subdirectory per instance
-     * @return True if the script finished successfully
      */
-    public boolean draw(final Path results) {
+    public void draw(final Path results) {
         boolean success;
         try {
             final Process process = new ProcessBuilder(
@@ -52,6 +51,5 @@ public final class Plots {
         if (!success) {
             System.err.println("Plots were not drawn, CSV files are in " + results);
         }
-        return success;
     }
 }

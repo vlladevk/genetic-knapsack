@@ -28,15 +28,6 @@ public final class BitFlipMutator implements GeneticOperator {
         this.probability = Probability.check(probability);
     }
 
-    /**
-     * Probability of flipping one gene.
-     *
-     * @return pm
-     */
-    public double probability() {
-        return this.probability;
-    }
-
     @Override
     public List<Chromosome> apply(final List<Chromosome> population, final Random random) {
         final List<Chromosome> mutated = new ArrayList<>(population.size());

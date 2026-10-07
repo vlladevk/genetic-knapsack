@@ -45,24 +45,6 @@ public final class KnapsackProblem implements Problem<List<Item>> {
         this.codec = new KnapsackCodec(instance);
     }
 
-    /**
-     * Data of the problem.
-     *
-     * @return Instance
-     */
-    public KnapsackInstance instance() {
-        return this.instance;
-    }
-
-    /**
-     * Penalty used by the fitness function.
-     *
-     * @return Penalty
-     */
-    public Penalty penalty() {
-        return this.penalty;
-    }
-
     @Override
     public Codec<List<Item>> codec() {
         return this.codec;

@@ -35,15 +35,6 @@ public abstract class Crossover implements GeneticOperator {
         this.probability = Probability.check(probability);
     }
 
-    /**
-     * Probability of crossing a pair of parents.
-     *
-     * @return pc
-     */
-    public final double probability() {
-        return this.probability;
-    }
-
     @Override
     public final List<Chromosome> apply(final List<Chromosome> population, final Random random) {
         final List<Chromosome> offspring = new ArrayList<>(population.size());

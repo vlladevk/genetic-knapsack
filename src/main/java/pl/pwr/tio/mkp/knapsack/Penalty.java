@@ -15,11 +15,4 @@ public interface Penalty {
      * @return Fitness, equal to {@code value} for feasible solutions
      */
     double apply(double value, double violation);
-
-    /**
-     * Short name used in results.
-     *
-     * @return Name
-     */
-    String name();
 }
