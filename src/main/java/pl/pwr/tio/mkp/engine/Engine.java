@@ -55,17 +55,15 @@ public final class Engine {
     private EvolutionResult evolve(final EvolutionResult previous, final Random random) {
         final List<Individual> parents =
             this.selector.select(previous.population(), this.populationSize, random);
-        List<Chromosome> chromosomes = new ArrayList<>(parents.size());
-        for (final Individual parent : parents) {
-            chromosomes.add(parent.chromosome());
-        }
+        List<Chromosome> chromosomes = parents.stream()
+            .map(Individual::chromosome)
+            .toList();
         for (final GeneticOperator operator : this.operators) {
             chromosomes = operator.apply(chromosomes, random);
         }
-        final List<Individual> children = new ArrayList<>(chromosomes.size());
-        for (final Chromosome chromosome : chromosomes) {
-            children.add(this.problem.evaluate(chromosome));
-        }
+        final List<Individual> children = chromosomes.stream()
+            .map(this.problem::evaluate)
+            .toList();
         return new EvolutionResult(previous.generation() + 1, children);
     }
 
