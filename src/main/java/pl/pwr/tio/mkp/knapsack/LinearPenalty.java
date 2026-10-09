@@ -30,9 +30,8 @@ public final class LinearPenalty implements Penalty {
     // Toy: torch gives 5 value per 1 kg (and per 1 l), more than any other item -> rho = 5.
     // Why: one extra unit of space can hold at most rho value, so a fine of rho per unit
     // makes overloading not pay off (like a luggage fee that is higher than what fits
-    // into one extra kg). Michalewicz uses the same rho for the 0/1 knapsack
-    // ("Genetic Algorithms + Data Structures = Evolution Programs"); here the max is
-    // also taken over all m constraints.
+    // into one extra kg). The max is taken over all m constraints, so the fine
+    // covers the most valuable use of a unit of any resource.
     public static LinearPenalty of(final KnapsackInstance instance) {
         double rho = 0;
         for (final Item item : instance.items()) {
