@@ -18,7 +18,7 @@ The two OR-Library problems were converted from the original files without chang
 to the numbers. Optima are given in `Main`.
 
 All three optima are proven by an exact solver (integer programming, CBC branch and
-bound, under 1 s each): `pip install pulp`, then
+bound, under 1 s each):
 `python scripts/exact.py data/toy.csv data/mknap1-6.csv data/mknapcb1-0.csv`.
 For `mknapcb1` OR-Library lists 24381 only as the best known value.
 
