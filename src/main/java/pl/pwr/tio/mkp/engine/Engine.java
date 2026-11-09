@@ -1,6 +1,7 @@
 package pl.pwr.tio.mkp.engine;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
 import java.util.stream.Stream;
@@ -13,13 +14,20 @@ import pl.pwr.tio.mkp.selector.TournamentSelector;
 
 // Genetic algorithm (algorytm genetyczny).
 // One generation: select P parents -> crossover -> mutation -> evaluate.
-// Children replace the whole population.
+// Children replace the whole population, except the e best parents (elitism).
 public final class Engine {
+
+    private static final Comparator<Individual> BEST_FIRST =
+        Comparator.comparingDouble(Individual::fitness).reversed();
 
     private final Problem<?> problem;
 
     // P, population size (rozmiar populacji)
     private final int populationSize;
+
+    // e, number of elites (elita): the e best individuals go to the next generation
+    // unchanged, so the best one found so far is never lost. 0 = no elitism (task 1).
+    private final int elites;
 
     private final Selector selector;
 
@@ -31,6 +39,7 @@ public final class Engine {
     private Engine(final Builder builder) {
         this.problem = builder.problem;
         this.populationSize = builder.populationSize;
+        this.elites = builder.elites;
         this.selector = builder.selector;
         this.operators = List.copyOf(builder.operators);
         this.seed = builder.seed;
@@ -64,7 +73,29 @@ public final class Engine {
         final List<Individual> children = chromosomes.stream()
             .map(this.problem::evaluate)
             .toList();
-        return new EvolutionResult(previous.generation() + 1, children);
+        return new EvolutionResult(previous.generation() + 1,
+            this.withElites(previous.population(), children));
+    }
+
+    // Elitism (selekcja elitarna): the e best parents take the place of the e worst
+    // children. Ranked by fitness, like in selection, so an elite may be infeasible.
+    private List<Individual> withElites(final List<Individual> parents,
+        final List<Individual> children) {
+        final List<Individual> next;
+        if (this.elites == 0) {
+            next = children;
+        } else {
+            next = new ArrayList<>(children.size());
+            children.stream()
+                .sorted(Engine.BEST_FIRST)
+                .limit(children.size() - this.elites)
+                .forEach(next::add);
+            parents.stream()
+                .sorted(Engine.BEST_FIRST)
+                .limit(this.elites)
+                .forEach(next::add);
+        }
+        return next;
     }
 
     public static final class Builder {
@@ -79,6 +110,8 @@ public final class Engine {
 
         private int populationSize = Builder.DEFAULT_POPULATION;
 
+        private int elites;
+
         private Selector selector = new TournamentSelector(Builder.DEFAULT_TOURNAMENT);
 
         private long seed;
@@ -92,6 +125,15 @@ public final class Engine {
                 throw new IllegalArgumentException("Population size must be at least 2: " + size);
             }
             this.populationSize = size;
+            return this;
+        }
+
+        public Builder elites(final int count) {
+            if (count < 0) {
+                throw new IllegalArgumentException(
+                    "Number of elites must not be negative: " + count);
+            }
+            this.elites = count;
             return this;
         }
 
@@ -112,6 +154,10 @@ public final class Engine {
         }
 
         public Engine build() {
+            if (this.elites >= this.populationSize) {
+                throw new IllegalArgumentException("Number of elites " + this.elites
+                    + " must be smaller than population size " + this.populationSize);
+            }
             return new Engine(this);
         }
     }
