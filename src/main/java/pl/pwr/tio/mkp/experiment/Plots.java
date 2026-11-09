@@ -3,23 +3,24 @@ package pl.pwr.tio.mkp.experiment;
 import java.io.IOException;
 import java.nio.file.Path;
 
-// Calls scripts/plots.py. If Python is missing, the CSV files are still there.
+// Calls a plotting script from scripts/. If Python is missing, the CSV files are still there.
 public final class Plots {
-
-    // relative to the working directory
-    private static final Path SCRIPT = Path.of("scripts", "plots.py");
 
     private final String python;
 
-    public Plots(final String python) {
+    // relative to the working directory, e.g. scripts/plots.py
+    private final Path script;
+
+    public Plots(final String python, final Path script) {
         this.python = python;
+        this.script = script;
     }
 
     public void draw(final Path results) {
         boolean success;
         try {
             final Process process = new ProcessBuilder(
-                this.python, Plots.SCRIPT.toString(), results.toString()
+                this.python, this.script.toString(), results.toString()
             ).inheritIO().start();
             success = process.waitFor() == 0;
         } catch (final IOException ex) {
