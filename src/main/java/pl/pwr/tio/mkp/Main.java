@@ -13,18 +13,24 @@ import pl.pwr.tio.mkp.experiment.Plots;
 import pl.pwr.tio.mkp.experiment.RunConfig;
 import pl.pwr.tio.mkp.experiment.RunOutcome;
 import pl.pwr.tio.mkp.experiment.SummaryTable;
+import pl.pwr.tio.mkp.experiment.TaskTwoPlan;
 import pl.pwr.tio.mkp.genetic.Individual;
 import pl.pwr.tio.mkp.knapsack.CsvInstanceReader;
 import pl.pwr.tio.mkp.knapsack.KnapsackCodec;
 import pl.pwr.tio.mkp.knapsack.KnapsackInstance;
 
-// Runs the toy example and all experiments.
-// Args: --no-plots skips Python; -Dpython=python3 changes the Python command.
+// Runs the toy example and the experiments of task 2 (results/zadanie-2).
+// Args: --zadanie-1 runs the experiments of task 1 instead (results/);
+// --no-plots skips Python; -Dpython=python3 changes the Python command.
 public final class Main {
 
     private static final Path DATA = Path.of("data");
 
     private static final Path RESULTS = Path.of("results");
+
+    private static final Path RESULTS_TWO = Main.RESULTS.resolve("zadanie-2");
+
+    private static final Path SCRIPTS = Path.of("scripts");
 
     // GA is random, one run proves nothing: every configuration runs 10 times,
     // seeds 1..10, and the summary shows mean, std, min, max
@@ -46,6 +52,8 @@ public final class Main {
 
     private static final String NO_PLOTS = "--no-plots";
 
+    private static final String TASK_ONE = "--zadanie-1";
+
     private Main() {
     }
 
@@ -57,17 +65,32 @@ public final class Main {
             reader.read(Main.DATA.resolve("mknap1-6.csv"), Main.MKNAP1_6_OPTIMUM),
             reader.read(Main.DATA.resolve("mknapcb1-0.csv"), Main.MKNAPCB1_0_OPTIMUM)
         );
-        final ExperimentRunner runner = new ExperimentRunner(Main.RESULTS, Main.RUNS);
-        final ExperimentPlan plan = new ExperimentPlan();
+        final boolean taskOne = List.of(args).contains(Main.TASK_ONE);
+        final Path results;
+        final Path script;
+        if (taskOne) {
+            results = Main.RESULTS;
+            script = Main.SCRIPTS.resolve("plots.py");
+        } else {
+            results = Main.RESULTS_TWO;
+            script = Main.SCRIPTS.resolve("plots2.py");
+        }
+        final ExperimentRunner runner = new ExperimentRunner(results, Main.RUNS);
         for (final KnapsackInstance instance : instances) {
             final long start = System.nanoTime();
-            final List<RunOutcome> outcomes = runner.run(instance, plan.configs(instance));
+            final List<RunConfig> configs;
+            if (taskOne) {
+                configs = new ExperimentPlan().configs(instance);
+            } else {
+                configs = new TaskTwoPlan().configs(instance);
+            }
+            final List<RunOutcome> outcomes = runner.run(instance, configs);
             new SummaryTable().print(instance, outcomes, System.out);
             System.out.printf("(%d runs in %.1f s)%n", outcomes.size(),
                 (System.nanoTime() - start) / 1e9);
         }
         if (!List.of(args).contains(Main.NO_PLOTS)) {
-            new Plots(System.getProperty("python", "python")).draw(Main.RESULTS);
+            new Plots(System.getProperty("python", "python"), script).draw(results);
         }
     }
 
