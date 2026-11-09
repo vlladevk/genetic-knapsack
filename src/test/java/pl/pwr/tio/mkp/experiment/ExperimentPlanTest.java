@@ -35,7 +35,10 @@ final class ExperimentPlanTest {
         assertEquals("pc=0.9", base.label());
         assertEquals(30, base.populationSize());
         assertEquals(1000, base.generations());
-        assertEquals(2, base.tournamentSize());
+        assertEquals(SelectionType.TOURNAMENT, base.selection());
+        assertEquals(0, base.elites());
+        assertEquals(CrossoverType.SINGLE_POINT, base.crossoverType());
+        assertEquals(MutationType.BIT_FLIP, base.mutationType());
         assertEquals(0.9, base.crossover(), ExperimentPlanTest.DELTA);
         assertEquals(1.0 / 50, base.mutation(), ExperimentPlanTest.DELTA);
         assertEquals(PenaltyType.LINEAR, base.penalty());

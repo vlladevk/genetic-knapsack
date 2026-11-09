@@ -21,12 +21,13 @@ public final class ExperimentRunner {
 
     private static final String[] HISTORY = {
         "series", "label", "seed", "generation", "best", "average", "median", "worst",
-        "best_feasible", "best_ever", "feasible_share",
+        "best_feasible", "best_ever", "feasible_share", "evaluations", "diversity",
     };
 
     private static final String[] RUNS = {
-        "instance", "series", "label", "population", "generations", "tournament", "pc", "pm",
-        "penalty", "seed", "best", "found_at", "optimum", "feasible_share",
+        "instance", "series", "label", "population", "generations", "selection", "elites",
+        "crossover", "pc", "mutation", "pm", "p_inv", "penalty", "seed", "best", "found_at",
+        "optimum", "feasible_share",
     };
 
     private final Path output;
@@ -56,8 +57,9 @@ public final class ExperimentRunner {
                         history);
                     summary.println(ExperimentRunner.csv(instance.name(), config.series(),
                         config.label(), config.populationSize(), config.generations(),
-                        config.tournamentSize(), config.crossover(), config.mutation(),
-                        config.penalty().name(), seed,
+                        config.selection(), config.elites(), config.crossoverType(),
+                        config.crossover(), config.mutationType(), config.mutation(),
+                        config.inversion(), config.penalty().name(), seed,
                         outcome.best(), outcome.foundAt(), instance.optimum(),
                         outcome.feasibleShare()));
                     outcomes.add(outcome);
@@ -89,7 +91,8 @@ public final class ExperimentRunner {
             history.println(ExperimentRunner.csv(config.series(), config.label(), seed,
                 result.generation(), result.best().fitness(), result.averageFitness(),
                 result.medianFitness(), result.worst().fitness(),
-                ExperimentRunner.fitness(feasible), best, share));
+                ExperimentRunner.fitness(feasible), best, share,
+                config.evaluations(result.generation()), result.diversity()));
         }
         return new RunOutcome(config, seed, best, found, share);
     }
