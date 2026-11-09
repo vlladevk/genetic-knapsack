@@ -42,8 +42,6 @@ public final class Main {
 
     private static final int TOY_GENERATIONS = 50;
 
-    private static final int TOY_TOURNAMENT = 2;
-
     private static final double TOY_CROSSOVER = 0.9;
 
     private static final String NO_PLOTS = "--no-plots";
@@ -76,9 +74,8 @@ public final class Main {
     // solves the toy example and prints the best feasible chromosome and its items
     private static void toy(final KnapsackInstance toy) {
         // base configuration of ExperimentPlan, only fewer generations
-        final RunConfig config = new RunConfig("toy", "base", Main.TOY_POPULATION,
-            Main.TOY_GENERATIONS, Main.TOY_TOURNAMENT, Main.TOY_CROSSOVER,
-            1.0 / toy.size(), PenaltyType.LINEAR);
+        final RunConfig config = RunConfig.taskOne("toy", "base", Main.TOY_POPULATION,
+            Main.TOY_GENERATIONS, Main.TOY_CROSSOVER, 1.0 / toy.size(), PenaltyType.LINEAR);
         final Optional<Individual> best = config.engine(toy, 1).stream()
             .limit(Main.TOY_GENERATIONS + 1L)
             .map(EvolutionResult::bestFeasible)

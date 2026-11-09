@@ -55,6 +55,33 @@ public record EvolutionResult(int generation, List<Individual> population) {
             .max(EvolutionResult.BY_FITNESS);
     }
 
+    // Diversity (różnorodność): mean Hamming distance between two individuals, as a
+    // share of genes, 0..1. 0 = all individuals are the same.
+    // Counted per gene, not per pair: if k of P individuals have a 1 at a gene, then
+    // k * (P - k) of the P * (P - 1) / 2 pairs differ there. O(P * n) instead of O(P^2 * n).
+    public double diversity() {
+        final int size = this.population.size();
+        final int length = this.population.get(0).chromosome().length();
+        double differing = 0;
+        for (int gene = 0; gene < length; ++gene) {
+            int ones = 0;
+            for (final Individual individual : this.population) {
+                if (individual.chromosome().gene(gene)) {
+                    ++ones;
+                }
+            }
+            differing += (double) ones * (size - ones);
+        }
+        final double pairs = size * (size - 1) / 2.0;
+        final double result;
+        if (pairs == 0) {
+            result = 0;
+        } else {
+            result = differing / pairs / length;
+        }
+        return result;
+    }
+
     // 0..1
     public double feasibleShare() {
         final long feasible = this.population.stream().filter(Individual::feasible).count();

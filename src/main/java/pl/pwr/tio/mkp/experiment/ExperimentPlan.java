@@ -3,17 +3,16 @@ package pl.pwr.tio.mkp.experiment;
 import java.util.List;
 import pl.pwr.tio.mkp.knapsack.KnapsackInstance;
 
-// Table of all experiments: one line = one configuration.
+// Experiments of task 1 (series A-D): one line = one configuration.
 public final class ExperimentPlan {
 
     // without generation 0
     // with 500 the best value was still improving at the end
     private static final int GENERATIONS = 1000;
 
-    // k = 2: the weakest pressure that still prefers better individuals. With a small
-    // population a stronger one quickly fills it with copies of one individual.
-    private static final int TOURNAMENT = 2;
-
+    // Tournament k = 2 (SelectionType): the weakest pressure that still prefers better
+    // individuals. With a small population a stronger one quickly fills it with copies
+    // of one individual.
     // Base: P = 30 (small, as the task requires), pc = 0.9 (typical pc is 0.6..1.0),
     // pm = 1/n, linear penalty. Each series changes one of them.
     // pm is written as a multiple of 1/n (1/n = 1 flipped gene per child on average),
@@ -45,9 +44,9 @@ public final class ExperimentPlan {
     public List<RunConfig> configs(final KnapsackInstance instance) {
         final double perGene = 1.0 / instance.size();
         return ExperimentPlan.ROWS.stream()
-            .map(row -> new RunConfig(row.series(), row.label(), row.population(),
-                ExperimentPlan.GENERATIONS, ExperimentPlan.TOURNAMENT, row.crossover(),
-                row.mutationPerN() * perGene, row.penalty()))
+            .map(row -> RunConfig.taskOne(row.series(), row.label(), row.population(),
+                ExperimentPlan.GENERATIONS, row.crossover(), row.mutationPerN() * perGene,
+                row.penalty()))
             .toList();
     }
 
