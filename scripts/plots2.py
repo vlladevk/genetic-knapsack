@@ -11,6 +11,9 @@ For every instance directory with history.csv and runs.csv writes:
   plots/heatmap_all.png                series H: gap of every combination
   plots/factors_all.png                series H: mean gap of every level of every factor
 
+summary.md also has Mann-Whitney U tests: are the differences between the best
+configurations larger than the random spread of 10 runs?
+
 Then all plots are shown in one window (arrow keys switch between them).
 --no-show only writes the files.
 """
@@ -25,6 +28,8 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt  # noqa: E402
 import numpy as np  # noqa: E402
 import pandas as pd  # noqa: E402
+
+from scipy.stats import mannwhitneyu  # noqa: E402
 
 from plots import (  # noqa: E402
     GRID, INK, INK_SECONDARY, OUTSIDE, REFERENCE, SERIES_COLORS, SURFACE, WIDE,
@@ -97,7 +102,45 @@ def table(frame, columns, digits=None):
     return lines
 
 
-def markdown(stats, instance, optimum):
+def compare(runs, pairs):
+    """Mann-Whitney U test (two-sided) on the best values of 10 runs of two configurations.
+
+    p < 0.05: the difference is unlikely to come only from the randomness of the runs.
+    """
+    lines = ["| configuration A | configuration B | mean A | mean B | p-value | significant |",
+             "|---|---|---|---|---|---|"]
+    for (series_a, label_a), (series_b, label_b) in pairs:
+        first = runs[(runs["series"] == series_a) & (runs["label"] == label_a)]["best"].dropna()
+        second = runs[(runs["series"] == series_b) & (runs["label"] == label_b)]["best"].dropna()
+        if first.empty or second.empty:
+            continue
+        p_value = mannwhitneyu(first, second, alternative="two-sided").pvalue
+        lines.append(f"| {series_a} {label_a} | {series_b} {label_b} | {first.mean():.1f} | "
+                     f"{second.mean():.1f} | {p_value:.4f} | {'yes' if p_value < 0.05 else 'no'} |")
+    return lines
+
+
+def tests(runs, stats):
+    pairs = []
+    final = stats[stats["series"] == "Z-final"]
+    if not final.empty:
+        pairs += [(("Z-final", "task 2 best"), ("Z-final", label))
+                  for label in final["label"] if label.startswith("task 1")]
+    ranked = stats[stats["series"] == FACTOR_SERIES].sort_values("gap_percent")
+    if len(ranked) >= 2:
+        pairs.append(((FACTOR_SERIES, ranked["label"].iloc[0]),
+                      (FACTOR_SERIES, ranked["label"].iloc[1])))
+    selection = stats[stats["series"] == SELECTION_SERIES]
+    if not selection.empty:
+        pairs += [((SELECTION_SERIES, f"{name}+elite"), (SELECTION_SERIES, name))
+                  for name in ("tournament", "roulette", "rank")]
+        pairs.append(((SELECTION_SERIES, "tournament"), (SELECTION_SERIES, "rank")))
+    if not pairs:
+        return []
+    return ["## Mann-Whitney U tests (p < 0.05 = significant)", ""] + compare(runs, pairs) + [""]
+
+
+def markdown(stats, instance, optimum, runs):
     digits = {"gap_percent": 2, "best_gap_percent": 2, "final_diversity": 3}
     columns = ["label", "feasible_runs", "mean", "std", "max", "gap_percent",
                "best_gap_percent", "mean_found_at", "final_diversity"]
@@ -113,6 +156,7 @@ def markdown(stats, instance, optimum):
             lines += [f"## {SERIES_TITLES.get(series, series)}", ""]
             lines += table(part, columns, digits)
         lines.append("")
+    lines += tests(runs, stats)
     return "\n".join(lines)
 
 
@@ -291,7 +335,7 @@ def instance(directory):
     out.mkdir(exist_ok=True)
     stats = summary(runs, history)
     stats.to_csv(directory / "summary.csv", index=False)
-    (directory / "summary.md").write_text(markdown(stats, directory.name, optimum),
+    (directory / "summary.md").write_text(markdown(stats, directory.name, optimum, runs),
                                           encoding="utf-8")
     for series in dict.fromkeys(runs["series"]):
         if series != FACTOR_SERIES:
