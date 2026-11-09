@@ -5,7 +5,7 @@ Genetic algorithm for the **multidimensional knapsack problem** (MKP,
 Course: *Techniki inteligencji obliczeniowej*, PWr.
 
 - **Task 1** (tag `zadanie-1`): basic GA, see [Task 1](#task-1-experiments).
-- **Task 2** (tag `zadanie-2`): elitism, two more selections, two more crossovers,
+- **Task 2** (branch `zadanie-2`): elitism, two more selections, two more crossovers,
   inversion mutation, and research on the best combination, see
   [Task 2](#task-2-extended-genetic-algorithm).
 
