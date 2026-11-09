@@ -13,7 +13,19 @@ import pl.pwr.tio.mkp.knapsack.KnapsackInstance;
 //   F  crossover                  (type, and pc for uniform: does pc matter now?)
 //   G  mutation                   (bit-flip, inversion, both; p of inversion)
 //   H  all combinations           3 selections x 2 elitism x 3 crossovers x 3 mutations
+//   I  parameters of the winner of H (tournament + 1 elite, two-point, bit-flip):
+//      number of elites, pm, pc - one at a time
+//   Z  final: task 1 vs task 2 with the same, larger budget of about 50 000 evaluations
+//      (task 1 had its best result with P = 50, G = 1000)
 public final class TaskTwoPlan {
+
+    // budget of the final series: P = 50, G = 1000 -> 50 050 evaluations;
+    // P = 30 gets G = 1667 -> 50 040
+    private static final int FINAL_GENERATIONS_30 = 1667;
+
+    private static final int FINAL_GENERATIONS_50 = 1000;
+
+    private static final int FINAL_POPULATION_50 = 50;
 
     private static final int POPULATION = 30;
 
@@ -66,7 +78,31 @@ public final class TaskTwoPlan {
         new Row("G-mutation",  "inversion p=0.3",     T, 0, ONE, 0.9, INV,  0, 0.3),
         new Row("G-mutation",  "inversion p=0.6",     T, 0, ONE, 0.9, INV,  0, 0.6),
         new Row("G-mutation",  "bit-flip+inv p=0.1",  T, 0, ONE, 0.9, BOTH, 1, 0.1),
-        new Row("G-mutation",  "bit-flip+inv p=0.3",  T, 0, ONE, 0.9, BOTH, 1, 0.3)
+        new Row("G-mutation",  "bit-flip+inv p=0.3",  T, 0, ONE, 0.9, BOTH, 1, 0.3),
+
+        new Row("I-tuning",    "winner (e=1)",        T, 1, TWO, 0.9, BIT,  1, 0),
+        new Row("I-tuning",    "e=2",                 T, 2, TWO, 0.9, BIT,  1, 0),
+        new Row("I-tuning",    "e=5",                 T, 5, TWO, 0.9, BIT,  1, 0),
+        new Row("I-tuning",    "pm=0.5/n",            T, 1, TWO, 0.9, BIT,  0.5, 0),
+        new Row("I-tuning",    "pm=2/n",              T, 1, TWO, 0.9, BIT,  2, 0),
+        new Row("I-tuning",    "pc=0.6",              T, 1, TWO, 0.6, BIT,  1, 0),
+        new Row("I-tuning",    "pc=1.0",              T, 1, TWO, 1.0, BIT,  1, 0)
+    );
+
+    // final series: label, population, generations, row with the methods
+    private static final List<Final> FINAL = List.of(
+        new Final("task 1 base", 30, TaskTwoPlan.FINAL_GENERATIONS_30,
+            new Row("Z-final", "", T, 0, ONE, 0.9, BIT, 1, 0)),
+        new Final("task 1 best n=50 (P=50)", TaskTwoPlan.FINAL_POPULATION_50,
+            TaskTwoPlan.FINAL_GENERATIONS_50,
+            new Row("Z-final", "", T, 0, ONE, 0.9, BIT, 1, 0)),
+        new Final("task 1 best n=100 (pm=0.5/n)", 30, TaskTwoPlan.FINAL_GENERATIONS_30,
+            new Row("Z-final", "", T, 0, ONE, 0.9, BIT, 0.5, 0)),
+        new Final("task 2 best", 30, TaskTwoPlan.FINAL_GENERATIONS_30,
+            new Row("Z-final", "", T, 1, TWO, 0.9, BIT, 1, 0)),
+        new Final("task 2 best (P=50)", TaskTwoPlan.FINAL_POPULATION_50,
+            TaskTwoPlan.FINAL_GENERATIONS_50,
+            new Row("Z-final", "", T, 1, TWO, 0.9, BIT, 1, 0))
     );
 
     // series H is generated: every combination of the factors, the rest as in the base
@@ -83,13 +119,16 @@ public final class TaskTwoPlan {
                 }
             }
         }
-        final double perGene = 1.0 / instance.size();
-        return rows.stream()
-            .map(row -> new RunConfig(row.series(), row.label(), TaskTwoPlan.POPULATION,
-                TaskTwoPlan.GENERATIONS, row.selection(), row.elites(), row.crossoverType(),
-                row.crossover(), row.mutationType(), row.mutationPerN() * perGene,
-                row.inversion(), PenaltyType.LINEAR))
-            .toList();
+        final List<RunConfig> configs = new ArrayList<>();
+        for (final Row row : rows) {
+            configs.add(row.config(row.label(), TaskTwoPlan.POPULATION, TaskTwoPlan.GENERATIONS,
+                instance));
+        }
+        for (final Final last : TaskTwoPlan.FINAL) {
+            configs.add(last.row().config(last.label(), last.population(), last.generations(),
+                instance));
+        }
+        return configs;
     }
 
     // e.g. "rank+e1 uniform bit-flip+inv"
@@ -120,5 +159,15 @@ public final class TaskTwoPlan {
         double mutationPerN,
         double inversion
     ) {
+
+        RunConfig config(final String name, final int population, final int generations,
+            final KnapsackInstance instance) {
+            return new RunConfig(this.series, name, population, generations, this.selection,
+                this.elites, this.crossoverType, this.crossover, this.mutationType,
+                this.mutationPerN / instance.size(), this.inversion, PenaltyType.LINEAR);
+        }
+    }
+
+    private record Final(String label, int population, int generations, Row row) {
     }
 }

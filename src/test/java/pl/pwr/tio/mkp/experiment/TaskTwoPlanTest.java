@@ -33,12 +33,16 @@ final class TaskTwoPlanTest {
             .map(config -> config.series() + " " + config.label()).toList()).size());
     }
 
-    // the same budget of fitness evaluations for every configuration
+    // the same budget of fitness evaluations within a series: 30 030 in E-I,
+    // about 50 000 in the final series
     @Test
-    void everyConfigurationHasSameBudget() throws IOException {
+    void everySeriesHasEqualBudget() throws IOException {
         final List<RunConfig> all = new TaskTwoPlan().configs(TaskTwoPlanTest.instance());
-        assertTrue(all.stream().allMatch(config ->
-            config.evaluations(config.generations()) == 30L * 1001));
+        assertTrue(all.stream().filter(config -> !"Z-final".equals(config.series()))
+            .allMatch(config -> config.evaluations(config.generations()) == 30L * 1001));
+        assertTrue(all.stream().filter(config -> "Z-final".equals(config.series()))
+            .allMatch(config -> Math.abs(config.evaluations(config.generations()) - 50_050)
+                <= 10));
     }
 
     // first configuration of series E = base of task 1
