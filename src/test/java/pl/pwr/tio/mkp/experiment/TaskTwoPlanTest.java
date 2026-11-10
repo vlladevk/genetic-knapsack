@@ -34,13 +34,13 @@ final class TaskTwoPlanTest {
     }
 
     // the same budget of fitness evaluations within a series: 30 030 in E-I,
-    // about 50 000 in the final series
+    // about 50 000 in series J and the final series
     @Test
     void everySeriesHasEqualBudget() throws IOException {
         final List<RunConfig> all = new TaskTwoPlan().configs(TaskTwoPlanTest.instance());
-        assertTrue(all.stream().filter(config -> !"Z-final".equals(config.series()))
+        assertTrue(all.stream().filter(config -> !TaskTwoPlanTest.large(config))
             .allMatch(config -> config.evaluations(config.generations()) == 30L * 1001));
-        assertTrue(all.stream().filter(config -> "Z-final".equals(config.series()))
+        assertTrue(all.stream().filter(TaskTwoPlanTest::large)
             .allMatch(config -> Math.abs(config.evaluations(config.generations()) - 50_050)
                 <= 10));
     }
@@ -51,6 +51,10 @@ final class TaskTwoPlanTest {
         final RunConfig base = new TaskTwoPlan().configs(TaskTwoPlanTest.instance()).get(0);
         assertEquals(RunConfig.taskOne("E-selection", "tournament", 30, 1000, 0.9, 1.0 / 50,
             PenaltyType.LINEAR), base);
+    }
+
+    private static boolean large(final RunConfig config) {
+        return "Z-final".equals(config.series()) || "J-approaches".equals(config.series());
     }
 
     private static KnapsackInstance instance() throws IOException {
