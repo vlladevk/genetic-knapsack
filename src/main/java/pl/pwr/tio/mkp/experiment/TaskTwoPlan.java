@@ -14,9 +14,14 @@ import pl.pwr.tio.mkp.knapsack.KnapsackInstance;
 //   G  mutation                   (bit-flip, inversion, both; p of inversion)
 //   H  all combinations           3 selections x 2 elitism x 3 crossovers x 3 mutations
 //   I  parameters of the winner of H (tournament + 1 elite, two-point, bit-flip):
-//      number of elites, pm, pc - one at a time
-//   Z  final: task 1 vs task 2 with the same, larger budget of about 50 000 evaluations
-//      (task 1 had its best result with P = 50, G = 1000)
+//      number of elites, pm, pc - one at a time (table only, no plot)
+//   J  three ways to choose the best combination, each with a reason, at the budget of
+//      the final series:
+//        A  winner of each of E, F, G taken one by one (n = 100)
+//        B  winner of the heatmap H on n = 100
+//        C  winner of the heatmap H on n = 50
+//   Z  final: the best approach of J vs task 1 with the same, larger budget of about
+//      50 000 evaluations (task 1 had its best result with P = 50, G = 1000)
 public final class TaskTwoPlan {
 
     // budget of the final series: P = 50, G = 1000 -> 50 050 evaluations;
@@ -89,19 +94,31 @@ public final class TaskTwoPlan {
         new Row("I-tuning",    "pc=1.0",              T, 1, TWO, 1.0, BIT,  1, 0)
     );
 
-    // final series: label, population, generations, row with the methods
+    // series J and Z: label, population, generations, row with the methods
     private static final List<Final> FINAL = List.of(
-        new Final("task 1 base", 30, TaskTwoPlan.FINAL_GENERATIONS_30,
+        new Final("A: tournament+elite; one-point; inversion 0.3", 30,
+            TaskTwoPlan.FINAL_GENERATIONS_30,
+            new Row("J-approaches", "", T, 1, ONE, 0.9, INV, 0, 0.3)),
+        new Final("B: tournament+elite; two-point; bit-flip 1/n", 30,
+            TaskTwoPlan.FINAL_GENERATIONS_30,
+            new Row("J-approaches", "", T, 1, TWO, 0.9, BIT, 1, 0)),
+        new Final("C: rank+elite; uniform; bit-flip 1/n", 30,
+            TaskTwoPlan.FINAL_GENERATIONS_30,
+            new Row("J-approaches", "", K, 1, UNI, 0.9, BIT, 1, 0)),
+        new Final("task 1: tournament; one-point; bit-flip 1/n; P=30", 30,
+            TaskTwoPlan.FINAL_GENERATIONS_30,
             new Row("Z-final", "", T, 0, ONE, 0.9, BIT, 1, 0)),
-        new Final("task 1 best n=50 (P=50)", TaskTwoPlan.FINAL_POPULATION_50,
-            TaskTwoPlan.FINAL_GENERATIONS_50,
+        new Final("task 1: tournament; one-point; bit-flip 1/n; P=50",
+            TaskTwoPlan.FINAL_POPULATION_50, TaskTwoPlan.FINAL_GENERATIONS_50,
             new Row("Z-final", "", T, 0, ONE, 0.9, BIT, 1, 0)),
-        new Final("task 1 best n=100 (pm=0.5/n)", 30, TaskTwoPlan.FINAL_GENERATIONS_30,
+        new Final("task 1: tournament; one-point; bit-flip 0.5/n; P=30", 30,
+            TaskTwoPlan.FINAL_GENERATIONS_30,
             new Row("Z-final", "", T, 0, ONE, 0.9, BIT, 0.5, 0)),
-        new Final("task 2 best", 30, TaskTwoPlan.FINAL_GENERATIONS_30,
+        new Final("task 2: tournament+elite; two-point; bit-flip 1/n; P=30", 30,
+            TaskTwoPlan.FINAL_GENERATIONS_30,
             new Row("Z-final", "", T, 1, TWO, 0.9, BIT, 1, 0)),
-        new Final("task 2 best (P=50)", TaskTwoPlan.FINAL_POPULATION_50,
-            TaskTwoPlan.FINAL_GENERATIONS_50,
+        new Final("task 2: tournament+elite; two-point; bit-flip 1/n; P=50",
+            TaskTwoPlan.FINAL_POPULATION_50, TaskTwoPlan.FINAL_GENERATIONS_50,
             new Row("Z-final", "", T, 1, TWO, 0.9, BIT, 1, 0))
     );
 

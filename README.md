@@ -160,8 +160,19 @@ convergence plots is the number of evaluations.
 | F | crossover (none, one-point, two-point, uniform; pc of uniform) |
 | G | mutation (bit-flip, inversion p = 0.1 / 0.3 / 0.6, both) |
 | H | all 54 combinations: 3 selections × 2 elitism × 3 crossovers × 3 mutations |
-| I | parameters of the winner of H: number of elites, pm, pc |
-| Z | final: task 1 vs task 2, equal budget of about 50 000 evaluations |
+| I | parameters of the winner of H: number of elites, pm, pc (table only) |
+| J | three ways to choose the best combination, about 50 000 evaluations |
+| Z | final: the chosen combination vs task 1, equal budget of about 50 000 evaluations |
+
+Series J, the candidates and why each of them:
+
+| Candidate | Methods | Why |
+|---|---|---|
+| A | tournament + 1 elite, one-point, inversion p = 0.3 | the winner of each of E, F, G taken one by one (n = 100) |
+| B | tournament + 1 elite, two-point, bit-flip pm = 1/n | the best cell of the heatmap H on n = 100 |
+| C | rank + 1 elite, uniform, bit-flip pm = 1/n | the best cell of the heatmap H on n = 50 |
+
+All three use pc = 0.9 and P = 30, G = 1667; e = 1 and pm = 1/n were the best in series I.
 
 Measures: gap = (optimum − mean best value) / optimum, std, best run, generation of the
 best value, diversity of the population (mean Hamming distance between two individuals,
@@ -180,18 +191,21 @@ Gap, % (mean of 10 runs), `mknap1-6` (n = 50) / `mknapcb1-0` (n = 100):
 | F | no crossover / one-point / two-point / uniform | 0.98 / 0.91 / 0.79 / 2.73 | 10.23 / 9.19 / 9.36 / 9.42 |
 | G | bit-flip / inversion p=0.3 / both | 0.91 / 2.29 / 1.93 | 9.19 / 8.68 / 13.46 |
 | H | best combination | 0.50 (rank + elite, uniform, bit-flip) | 4.46 (tournament + elite, two-point, bit-flip) |
-| Z | best of task 1 (equal budget) | 0.60 | 4.60 |
-| Z | **task 2: tournament + 1 elite, two-point, bit-flip 1/n, pc 0.9** | **0.55** | **3.31** |
+| J | A: tournament + elite, one-point, inversion 0.3 | 2.13 | 10.36 |
+| J | **B: tournament + elite, two-point, bit-flip 1/n** | 0.55 | **3.31** |
+| J | C: rank + elite, uniform, bit-flip 1/n | **0.32** | 4.45 |
+| Z | best of task 1 (equal budget) | 0.60 (P = 50) | 4.60 (pm = 0.5/n) |
+| Z | **task 2 = B: tournament + 1 elite, two-point, bit-flip 1/n, pc 0.9, P = 30** | **0.55** | **3.31** |
 
 ![Every combination of series H](docs/images/zadanie-2/heatmap_all.png)
-
-![Effect of each factor in series H](docs/images/zadanie-2/factors_all.png)
 
 ![Convergence for every selection, with and without elitism](docs/images/zadanie-2/convergence_E-selection.png)
 
 ![Diversity of the population for every selection](docs/images/zadanie-2/diversity_E-selection.png)
 
 ![Convergence of the mutation operators](docs/images/zadanie-2/convergence_G-mutation.png)
+
+![Three ways to choose the best combination](docs/images/zadanie-2/convergence_J-approaches.png)
 
 ![Final comparison with task 1](docs/images/zadanie-2/convergence_Z-final.png)
 
@@ -226,6 +240,12 @@ Conclusions:
   grows to 5.16 %. With elitism pm = 1/n is better than 0.5/n (4.46 vs 5.14 %), while
   without elitism (task 1) 0.5/n was better: the elite keeps the best individual, so more
   mutation can be afforded. pc changes little.
+- **Choice of the best combination (series J).** Taking the winner of every single-factor
+  series (A) is the worst approach: 10.36 % on n = 100, worse than B and C (p = 0.0002).
+  B and C both come from the heatmap; C is better on n = 50 (0.32 vs 0.55 %, but
+  p = 0.10, not significant), B is better on n = 100 (3.31 vs 4.45 %, p = 0.014). So **B is
+  chosen**: it is significantly better on the larger, harder instance and as good as C on
+  the smaller one.
 - **Task 2 vs task 1.** With the same budget of 50 000 evaluations the task 2 algorithm is
   better than every configuration of task 1 on n = 100 (3.31 % vs 4.60 %, p = 0.013) and
   as good as the best one on n = 50 (0.55 % vs 0.60 %, not significant). Its best run is
